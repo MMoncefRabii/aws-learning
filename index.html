@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS Systems Operations: my study notes</title>
+<style>
+:root{--bg:#f3f6f8;--panel:#fff;--ink:#14212b;--muted:#51626f;--line:#d3dde4;--accent:#0b6e7f;--soft:#e2f1f4;--warn:#fff4d6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1a21;--panel:#16252e;--ink:#e6eef3;--muted:#9bb0bd;--line:#2a3e4a;--accent:#5cc4d6;--soft:#1b3540;--warn:#3a3317}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Georgia,"Times New Roman",serif}
+h1,h2,h3,nav,summary,.tag,button{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1100px;margin:0 auto}
+nav{position:sticky;top:0;align-self:start;height:100vh;padding:28px 20px;border-right:1px solid var(--line);font-size:14px;overflow:auto}
+nav h2{font-size:15px;margin:0 0 12px}
+nav ol{list-style:none;margin:0;padding:0}
+nav li{padding:5px 8px;border-radius:6px;color:var(--muted)}
+nav li.done{color:var(--ink)}
+nav li.now{background:var(--soft);color:var(--ink);font-weight:600}
+nav a{color:inherit;text-decoration:none}
+nav a:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding:40px 36px 80px;max-width:760px}
+h1{font-size:2rem;line-height:1.2;margin:0 0 6px}
+h2{font-size:1.35rem;margin:2.2rem 0 .6rem}
+h3{font-size:1.05rem;margin:1.4rem 0 .3rem}
+.sub{color:var(--muted);margin:0 0 1.5rem}
+.tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--accent);font-weight:600}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:1rem 0}
+.box.note{background:var(--warn)}
+ul,ol.plain{padding-left:1.2rem}
+table{border-collapse:collapse;width:100%;font-size:15px;background:var(--panel)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-family:system-ui,sans-serif;font-size:14px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 16px;margin:.6rem 0}
+summary{cursor:pointer;font-weight:600;font-size:15px}
+label.chk{display:block;padding:3px 0}
+.learned{border-left:4px solid var(--accent);background:var(--panel);padding:14px 20px;border-radius:0 8px 8px 0}
+.empty{color:var(--muted);font-style:italic}
+code{font:14px ui-monospace,Consolas,monospace;background:var(--soft);padding:1px 5px;border-radius:4px}
+@media(max-width:800px){.wrap{display:block}nav{position:static;height:auto;border:0;border-bottom:1px solid var(--line)}main{padding:24px 18px 60px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav aria-label="Course modules">
+<h2>Systems Operations on AWS</h2>
+<ol>
+<li class="done"><a href="#module-0">0. Welcome and overview</a></li>
+<li class="now"><a href="#module-1">1. Understanding systems operations</a></li>
+<li>2. Tooling and automation</li>
+<li>3. Computing servers</li>
+<li>4. Computing, scaling, name resolution</li>
+<li>5. Containers and serverless</li>
+<li>6. Database services</li>
+<li>7. Networking</li>
+<li>8. Storing and archiving</li>
+<li>9. Monitoring and security</li>
+<li>10. Managing resource consumption</li>
+<li>11. Automated, repeatable deployments</li>
+</ol>
+</nav>
+
+<main>
+<h1>AWS Systems Operations: my study notes</h1>
+<p class="sub">One section per module. Each ends with a "What I learned" block that I fill in after checking it with my instructor.</p>
+
+<!-- ===================== MODULE 1 ===================== -->
+<article id="module-1">
+<span class="tag">Module 1</span>
+<h2 style="margin-top:.4rem">Understanding Systems Operations on AWS</h2>
+
+<div class="box">
+<strong>Objectives.</strong> By the end of this module I can:
+<ul>
+<li>Explain the course scope and expectations.</li>
+<li>Navigate the AWS Documentation website.</li>
+</ul>
+</div>
+
+<h2>1. What "systems operations" means</h2>
+<p>Systems operations is the work of keeping a running system healthy: deploying it, watching it, securing it, scaling it, fixing it, and controlling its cost. The developer builds the application. The operations person (often called a SysOps administrator or cloud operations engineer) makes sure it keeps running well. On AWS, much of this work is done with services and tools instead of racks and cables, so the course teaches you which service does which job.</p>
+
+<h2>2. Course scope</h2>
+<p>The course covers the whole life of a workload. The eleven topic modules, grouped by theme:</p>
+<table>
+<tr><th>Theme</th><th>Modules</th><th>You will be able to</th></tr>
+<tr><td>Foundation</td><td>0, 1</td><td>Know the course scope; understand AWS global infrastructure, core services and account security.</td></tr>
+<tr><td>Tools and automation</td><td>2, 11</td><td>Use the AWS CLI and admin tools; build repeatable deployments with AMIs and AWS CloudFormation.</td></tr>
+<tr><td>Compute</td><td>3, 4, 5</td><td>Manage, secure and scale instances; identify container and serverless services.</td></tr>
+<tr><td>Data</td><td>6, 8</td><td>Manage, secure and scale databases; configure storage services.</td></tr>
+<tr><td>Networking</td><td>7</td><td>Build virtual private networks with Amazon VPC.</td></tr>
+<tr><td>Observe and govern</td><td>9, 10</td><td>Monitor with Amazon CloudWatch, AWS CloudTrail and AWS Config; control consumption with tags, CloudWatch and AWS Trusted Advisor.</td></tr>
+</table>
+
+<h3>Prerequisites (preferred, not mandatory)</h3>
+<p><strong>Technical:</strong> basic computer concepts, email, file management, and a good understanding of the Internet.</p>
+<p><strong>Business:</strong> how IT is used in business, plus communication, leadership and customer service skills.</p>
+<p><strong>Course-specific:</strong> general familiarity with cloud computing, a working knowledge of distributed systems, general networking concepts, and multi-tier architectures.</p>
+<div class="box note"><strong>Why these matter.</strong> A multi-tier architecture splits an application into layers (for example web, application, database). Much of the later modules (VPC, scaling, databases) are about running and protecting those layers. If one of the prerequisites feels weak, revise it before Module 7.</div>
+
+<h2>3. Navigating the AWS Documentation website</h2>
+<p>The site is <code>docs.aws.amazon.com</code>. As a SysOps learner you will come back to it constantly, so learn its shape:</p>
+<ul>
+<li><strong>Search and service list.</strong> Find a service by name or browse by category (compute, storage, database, networking, management and governance).</li>
+<li><strong>Per-service documentation set.</strong> Each service has several guides. Typical ones: <em>User Guide</em> (how to use the service, concepts, console steps), <em>API Reference</em> (every API action and parameter), <em>CLI Reference</em> (every command for the AWS CLI), and sometimes a <em>Developer Guide</em> or <em>Getting Started</em> tutorial.</li>
+<li><strong>Left-hand table of contents.</strong> Use it to jump between concepts, tutorials, security, quotas and troubleshooting.</li>
+<li><strong>Other resources.</strong> Whitepapers and guides, SDKs and tools, and the "What's New" feed for updates. AWS re:Post and the Knowledge Center answer common operational questions.</li>
+</ul>
+<h3>Which guide do I open?</h3>
+<table>
+<tr><th>My question</th><th>Open</th></tr>
+<tr><td>What is this service and how do I use it?</td><td>User Guide</td></tr>
+<tr><td>What is the exact command or flag?</td><td>CLI Reference</td></tr>
+<tr><td>What parameters does this API call take?</td><td>API Reference</td></tr>
+<tr><td>How many of X can I create?</td><td>Quotas page of the service guide</td></tr>
+<tr><td>I want a first hands-on walkthrough.</td><td>Getting Started / tutorials</td></tr>
+</table>
+<p class="empty">Page layout can change over time. Check the live site on the student platform and note anything that differs from this table.</p>
+
+<h2>4. Key terms</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>Cloud computing</td><td>On-demand IT resources over the Internet with pay-as-you-go pricing.</td></tr>
+<tr><td>Distributed system</td><td>Many machines working together as one system.</td></tr>
+<tr><td>Multi-tier architecture</td><td>An application split into separate layers, such as web, app and data.</td></tr>
+<tr><td>AWS CLI</td><td>Command-line tool to manage AWS services (Module 2).</td></tr>
+<tr><td>Amazon CloudWatch / AWS CloudTrail / AWS Config</td><td>Metrics and alarms / API activity history / resource configuration history (Module 9).</td></tr>
+<tr><td>AWS CloudFormation</td><td>Describes infrastructure as a template so it deploys the same way every time (Module 11).</td></tr>
+</table>
+
+<h2>5. Self-check</h2>
+<details><summary>Which two things should I be able to do after this module?</summary><p>Explain the course scope and expectations, and navigate the AWS Documentation website.</p></details>
+<details><summary>Name three prerequisite areas that the course prefers.</summary><p>Any three of: cloud computing concepts, distributed systems, general networking, multi-tier architectures (plus basic IT literacy and business knowledge).</p></details>
+<details><summary>Which module teaches repeatable deployments, and with which tools?</summary><p>Module 11, with Amazon Machine Images (AMIs) and AWS CloudFormation.</p></details>
+<details><summary>Which services monitor infrastructure health?</summary><p>Amazon CloudWatch, AWS CloudTrail and AWS Config.</p></details>
+<details><summary>I need the exact syntax of a CLI command. Where do I look?</summary><p>The CLI Reference for that service in the AWS Documentation.</p></details>
+
+<h2>6. Module checklist</h2>
+<div class="box" id="checklist">
+<label class="chk"><input type="checkbox"> I can describe the 11 topic modules in my own words</label>
+<label class="chk"><input type="checkbox"> I know which prerequisites I need to revise</label>
+<label class="chk"><input type="checkbox"> I found a service's User Guide, API Reference and CLI Reference</label>
+<label class="chk"><input type="checkbox"> I answered the self-check without peeking</label>
+<label class="chk"><input type="checkbox"> I verified my "What I learned" notes with my instructor</label>
+</div>
+
+<h2>What I learned</h2>
+<div class="learned" id="learned-1">
+<p class="empty">Not written yet. After you finish the module on the student platform, tell your instructor what you understood. Once it is verified, the notes go here.</p>
+</div>
+</article>
+
+<!-- ===== NEXT MODULE: copy the <article> above, change ids and content ===== -->
+</main>
+</div>
+<script>
+// Remember checkbox ticks in this browser
+try{
+ const boxes=[...document.querySelectorAll('#checklist input')];
+ const saved=JSON.parse(localStorage.getItem('m1-checks')||'[]');
+ boxes.forEach((b,i)=>{b.checked=!!saved[i];b.addEventListener('change',()=>localStorage.setItem('m1-checks',JSON.stringify(boxes.map(x=>x.checked))))});
+}catch(e){}
+</script>
+</body>
+</html>
