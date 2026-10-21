@@ -38,6 +38,57 @@ label.chk{display:block;padding:3px 0}
 .empty{color:var(--muted);font-style:italic}
 code{font:14px ui-monospace,Consolas,monospace;background:var(--soft);padding:1px 5px;border-radius:4px}
 @media(max-width:800px){.wrap{display:block}nav{position:static;height:auto;border:0;border-bottom:1px solid var(--line)}main{padding:24px 18px 60px}}
+
+:root{--ok:#1a8a4a;--bad:#c23b3b;--gold:#d9a400}
+@media (prefers-color-scheme:dark){:root{--ok:#4cd488;--bad:#ff7a7a;--gold:#f0c43c}}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin:1rem 0}
+.figscroll{overflow-x:auto}
+#iamfig{display:block;min-width:720px;width:100%;height:auto}
+#iamfig text{font:13px system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--ink)}
+#iamfig .m{fill:var(--muted);font-size:11.5px}
+#iamfig .b{font-weight:700}
+#iamfig .acc{fill:var(--accent)}
+#iamfig .acct{fill:none;stroke:var(--line);stroke-width:2}
+#iamfig .iamband{fill:var(--soft);stroke:var(--accent);stroke-width:2;transition:stroke-width .5s}
+#iamfig .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:all .5s}
+#iamfig .region{fill:none;stroke:var(--line);stroke-width:2;transition:all .5s}
+#iamfig .az{fill:var(--panel);stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 4;transition:all .5s}
+#iamfig .res{fill:var(--bg);stroke:var(--muted);stroke-width:1.5}
+#iamfig .u{fill:var(--accent)}
+#iamfig .link{stroke:var(--muted);stroke-width:2;stroke-dasharray:6 4;opacity:.35;animation:dash 1s linear infinite}
+#iamfig .okc{fill:var(--ok)}#iamfig .badc{fill:var(--bad)}#iamfig .goldc{fill:var(--gold)}
+#iamfig text.okt{fill:var(--ok);font-weight:700;font-size:14px}
+#iamfig text.badt{fill:var(--bad);font-weight:700;font-size:14px}
+#iamfig .arr{stroke:var(--accent);stroke-width:2;fill:none}
+#iamfig .fa{fill:var(--accent)}
+#iamfig .n4,#iamfig .n5{opacity:0;transition:opacity .6s}
+#iamfig .role{opacity:.4;transition:opacity .6s}
+#iamfig .o1,#iamfig .o5,#iamfig .o6,#iamfig .o7,#iamfig .o8{display:none}
+#iamfig.on1 .o1,#iamfig.on5 .o5,#iamfig.on6 .o6,#iamfig.on7 .o7,#iamfig.on8 .o8{display:inline}
+#iamfig.ge4 .n4,#iamfig.ge5 .n5{opacity:1}
+#iamfig.ge7 .role{opacity:1}
+#iamfig.on1 .iamband{stroke-width:5}
+#iamfig.on1 .link,#iamfig.on8 .link{opacity:1;stroke:var(--accent);stroke-width:3}
+#iamfig.on2 .region{stroke:var(--accent);stroke-width:3}
+#iamfig.on2 .az{fill:var(--soft);stroke:var(--accent)}
+#iamfig.on3 .grp,#iamfig.on4 .pol,#iamfig.on7 .roleb{stroke:var(--accent);stroke-width:3}
+#maria{transform:translate(90px,170px);transition:transform 1.2s ease-in-out}
+#iamfig.ge3 #maria{transform:translate(190px,170px)}
+#omar{transform:translate(290px,170px)}
+.pk{animation-fill-mode:forwards}
+@keyframes allow{0%{transform:translate(190px,170px)}45%,55%{transform:translate(480px,226px)}100%{transform:translate(295px,515px)}}
+@keyframes deny{0%{transform:translate(190px,170px)}45%{transform:translate(480px,226px)}55%{transform:translate(488px,226px)}65%{transform:translate(472px,226px)}75%{transform:translate(480px,226px)}100%{transform:translate(190px,170px)}}
+@keyframes tok{0%{transform:translate(740px,165px)}100%{transform:translate(150px,400px)}}
+@keyframes rd{0%{transform:translate(175px,432px)}100%{transform:translate(285px,508px)}}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+@keyframes dash{to{stroke-dashoffset:-20}}
+.figctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.figctl button{font-size:14px;padding:6px 14px;border:1px solid var(--accent);background:var(--panel);color:var(--accent);border-radius:6px;cursor:pointer}
+.figctl button:hover{background:var(--soft)}
+.figctl .cnt{margin-left:auto;font:13px system-ui,sans-serif;color:var(--muted)}
+.cap{margin-top:10px;padding:10px 14px;background:var(--soft);border-radius:8px;min-height:92px}
+.cap strong{font-family:system-ui,sans-serif}
+@media (prefers-reduced-motion:reduce){#iamfig *{animation-duration:.01s!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -146,7 +197,101 @@ code{font:14px ui-monospace,Consolas,monospace;background:var(--soft);padding:1p
 
 <h2>What I learned</h2>
 <div class="learned" id="learned-1">
-<p class="empty">Not written yet. After you finish the module on the student platform, tell your instructor what you understood. Once it is verified, the notes go here.</p>
+<h3>The big picture, animated</h3>
+<p>Press <em>Play</em> or use <em>Next</em> to walk through how IAM protects an AWS account, step by step.</p>
+<div class="fig">
+<div class="figscroll">
+<svg id="iamfig" class="on1 ge1" viewBox="0 0 900 600" role="img" aria-label="Animated diagram: IAM is a global layer above Regions; users, groups, policies and roles decide which requests reach resources.">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="fa"/></marker></defs>
+<rect class="acct" x="10" y="10" width="880" height="580" rx="14"/>
+<text class="b" x="28" y="34">AWS account 123456789012</text>
+
+<rect class="iamband" x="30" y="46" width="840" height="214" rx="10"/>
+<text class="b acc" x="46" y="70">IAM: global, free, one per account</text>
+
+<rect class="box grp" x="140" y="88" width="200" height="150" rx="8"/>
+<text class="b" x="152" y="110">Group: Developers</text>
+<g id="maria"><circle class="u" cx="0" cy="-8" r="8"/><path class="u" d="M-14 14a14 12 0 0 1 28 0z"/><text y="32" text-anchor="middle">maria</text></g>
+<g id="omar"><circle class="u" cx="0" cy="-8" r="8"/><path class="u" d="M-14 14a14 12 0 0 1 28 0z"/><text y="32" text-anchor="middle">omar</text></g>
+
+<g class="n4"><rect class="box pol" x="380" y="88" width="210" height="104" rx="8"/>
+<text class="b" x="392" y="108">Policy (JSON)</text>
+<text x="392" y="128">Effect: Allow</text><text x="392" y="146">Action: s3:GetObject</text><text x="392" y="164">Resource: my-bucket/*</text>
+<text class="m" x="392" y="183">attached to the group</text>
+<line class="arr" x1="378" y1="140" x2="344" y2="140" marker-end="url(#ah)"/></g>
+
+<g class="n5"><rect class="box" x="380" y="208" width="210" height="34" rx="17"/>
+<text class="b" x="485" y="230" text-anchor="middle">IAM check: who + what</text></g>
+
+<g class="role"><rect class="box roleb" x="630" y="88" width="220" height="150" rx="8"/>
+<text class="b" x="642" y="110">Role: EC2S3Role</text>
+<text class="m" x="642" y="134">Trust policy:</text><text x="642" y="152">EC2 may assume this role</text>
+<text class="m" x="642" y="178">Permissions policy:</text><text x="642" y="196">read S3</text></g>
+
+<line class="link" x1="310" y1="260" x2="310" y2="290"/><line class="link" x1="745" y1="260" x2="745" y2="290"/>
+<g class="o8"><text class="b acc" x="450" y="279" text-anchor="middle" style="animation:fin .8s both">Every request: who are you? what may you do? Allow or Deny</text></g>
+
+<rect class="region" x="30" y="290" width="560" height="280" rx="10"/>
+<text class="b" x="46" y="314">Region eu-west-1 (Ireland)</text>
+<rect class="az" x="50" y="326" width="250" height="150" rx="8"/><text class="m" x="62" y="346">Availability Zone a</text>
+<rect class="az" x="320" y="326" width="250" height="150" rx="8"/><text class="m" x="332" y="346">Availability Zone b</text>
+<rect class="res" x="100" y="372" width="100" height="62" rx="6"/><text class="b" x="150" y="400" text-anchor="middle">EC2</text><text class="m" x="150" y="418" text-anchor="middle">instance</text>
+<rect class="res" x="370" y="372" width="100" height="62" rx="6" opacity=".6"/><text class="b" x="420" y="400" text-anchor="middle">EC2</text><text class="m" x="420" y="418" text-anchor="middle">copy</text>
+<rect class="res" x="200" y="498" width="190" height="48" rx="24"/><text class="b" x="295" y="527" text-anchor="middle">S3 bucket: my-bucket</text>
+
+<rect class="region" x="620" y="290" width="250" height="280" rx="10"/>
+<text class="b" x="636" y="314">Region eu-central-1</text><text class="m" x="636" y="332">(Frankfurt)</text>
+<rect class="az" x="640" y="350" width="210" height="100" rx="8"/><text class="m" x="652" y="370">Availability Zone a</text>
+<rect class="res" x="690" y="382" width="100" height="52" rx="6"/><text class="b" x="740" y="414" text-anchor="middle">EC2</text>
+<text class="m" x="636" y="490">Same users, groups and</text><text class="m" x="636" y="506">policies work here too.</text>
+<text class="m" x="636" y="522">Nothing to recreate.</text>
+
+<g class="o1"><text class="m" x="318" y="281" style="animation:fin .8s both">applies to every Region</text></g>
+
+<g class="o5"><g class="pk" style="animation:allow 3.6s ease-in-out forwards"><circle class="okc" r="8"/><text x="12" y="-10">s3:GetObject</text></g>
+<text class="okt" x="485" y="256" text-anchor="middle" style="animation:fin .5s 1.7s both">Allow</text></g>
+
+<g class="o6"><g class="pk" style="animation:deny 3.6s ease-in-out forwards"><circle class="badc" r="8"/><text x="12" y="-10">s3:DeleteBucket</text></g>
+<text class="badt" x="485" y="256" text-anchor="middle" style="animation:fin .5s 1.7s both">Deny (default)</text></g>
+
+<g class="o7"><g class="pk" style="animation:tok 2.6s ease-in-out forwards"><circle class="goldc" r="9"/><text x="-60" y="-14">temporary credentials</text></g>
+<g class="pk" style="animation:rd 1.6s 2.8s ease-in-out both"><circle class="okc" r="8"/><text x="12" y="-10">read</text></g></g>
+</svg>
+</div>
+<div class="figctl">
+<button type="button" id="fPrev">Previous</button>
+<button type="button" id="fPlay">Play</button>
+<button type="button" id="fNext">Next</button>
+<button type="button" id="fRe">Replay step</button>
+<span class="cnt" id="fCnt"></span>
+</div>
+<div class="cap" aria-live="polite"><strong id="fT"></strong><p id="fD" style="margin:.3rem 0 0"></p></div>
+</div>
+
+<h3>AWS Identity and Access Management (IAM)</h3>
+<p><strong>What it is.</strong> A free, <em>global</em> service that controls who can do what in an AWS account. It handles authentication (who are you?) and authorization (what may you do?). One IAM exists per account, so a user created once exists in every Region.</p>
+<p><strong>Regions.</strong> A Region is a separate geographic location made of several Availability Zones. The Region is where a resource runs, not where I am. I choose it for speed, legal compliance, cost, and service availability. Most services are regional; IAM is global.</p>
+<p><strong>Resources and ARNs.</strong> A resource is any object created in AWS (EC2 instance, S3 bucket, VPC, RDS database, IAM user...). Each has a unique ARN: <code>arn:partition:service:region:account-id:resource</code>. Global services such as IAM leave the Region empty, e.g. <code>arn:aws:iam::123456789012:user/maria</code>.</p>
+<p><strong>Building blocks.</strong> Root user (use once, protect with MFA), users, groups (hold users, carry policies), roles (temporary credentials), policies (JSON with Effect, Action, Resource), and MFA.</p>
+<p><strong>Workflow.</strong> Root creates a first admin and stops being used. The admin creates users, puts them in groups, and attaches policies to the groups. A user's permissions are the combination of all policies that apply to them.</p>
+<table>
+<tr><th>Policy type</th><th>Attached to</th><th>Answers</th></tr>
+<tr><td>Identity-based</td><td>User, group, or role</td><td>What can this identity do?</td></tr>
+<tr><td>Resource-based</td><td>A resource (e.g. S3 bucket)</td><td>Who can access this resource?</td></tr>
+<tr><td>Trust policy</td><td>A role only</td><td>Who can assume this role?</td></tr>
+</table>
+<p><strong>Three rules.</strong> Everything is denied by default. An explicit Deny always beats an Allow. Give least privilege: only what is needed.</p>
+<p><strong>Policy origins.</strong> AWS managed, customer managed, and inline. Prefer managed policies because they are reusable.</p>
+<p><strong>Corrections I made.</strong> IAM is global, not "available in all Regions". Region is about where the resource runs, not where I am. It is VPC (Virtual Private Cloud), not VPS. A trust policy is about assuming a role, not about a resource accepting actions.</p>
+<p><strong>Core CLI commands.</strong></p>
+<ul>
+<li><code>aws configure</code>, <code>aws sts get-caller-identity</code></li>
+<li><code>aws iam create-user / list-users / get-user / delete-user</code></li>
+<li><code>aws iam create-group / add-user-to-group / get-group</code></li>
+<li><code>aws iam attach-group-policy / list-attached-group-policies / create-policy</code></li>
+<li><code>aws iam create-role --assume-role-policy-document file://trust.json</code></li>
+<li><code>aws iam attach-role-policy</code></li>
+</ul>
 </div>
 </article>
 
@@ -160,6 +305,40 @@ try{
  const saved=JSON.parse(localStorage.getItem('m1-checks')||'[]');
  boxes.forEach((b,i)=>{b.checked=!!saved[i];b.addEventListener('change',()=>localStorage.setItem('m1-checks',JSON.stringify(boxes.map(x=>x.checked))))});
 }catch(e){}
+
+(function(){
+const S=[
+["IAM is global","IAM sits at the account level, above every Region. You create a user once and it works in all Regions, which is why the dashed links reach both. It is free."],
+["Regions and Availability Zones","A Region is a separate geographic location (Ireland, Frankfurt). Each one has several Availability Zones, which are isolated data centers. Most resources, such as EC2 and S3, live in one Region. You choose it for speed, law, cost and service availability."],
+["Users and groups","maria joins the Developers group. Put people in groups, then manage permissions once per group instead of once per person."],
+["Policies","A JSON policy lists Effect, Action and Resource. Attach it to the group and every member inherits it. Least privilege means granting only what is needed."],
+["A request is allowed","maria asks to read from the bucket. IAM authenticates her (who are you?) and authorizes her (does a policy allow s3:GetObject on this ARN?). One does, so the request reaches S3."],
+["A request is denied","maria tries s3:DeleteBucket. No policy allows it, so the default deny applies. Even if one policy allowed it, an explicit Deny in any policy would still win."],
+["Roles and trust policies","An EC2 instance needs S3 access without stored keys. The role's trust policy says EC2 may assume it, so EC2 receives temporary credentials, and the role's permissions policy lets it read S3."],
+["Why IAM matters","Every request is checked: who are you, and what may you do. Only the right people and services reach the right resources, with least privilege, in every Region."]];
+const svg=document.getElementById('iamfig');if(!svg)return;
+const T=document.getElementById('fT'),D=document.getElementById('fD'),C=document.getElementById('fCnt'),P=document.getElementById('fPlay');
+let n=1,timer=null;
+function go(k){
+ n=Math.max(1,Math.min(S.length,k));
+ svg.setAttribute('class','');void svg.getBoundingClientRect();
+ const c=['on'+n];for(let i=1;i<=n;i++)c.push('ge'+i);
+ svg.setAttribute('class',c.join(' '));
+ T.textContent=n+'. '+S[n-1][0];D.textContent=S[n-1][1];C.textContent='Step '+n+' of '+S.length;
+}
+function stop(){clearInterval(timer);timer=null;P.textContent='Play'}
+function play(){
+ if(timer){stop();return}
+ if(n===S.length)go(1);
+ P.textContent='Pause';
+ timer=setInterval(()=>{if(n>=S.length){stop();return}go(n+1)},6500);
+}
+document.getElementById('fNext').onclick=()=>{stop();go(n+1)};
+document.getElementById('fPrev').onclick=()=>{stop();go(n-1)};
+document.getElementById('fRe').onclick=()=>{stop();go(n)};
+P.onclick=play;
+go(1);
+})();
 </script>
 </body>
 </html>
