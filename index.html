@@ -89,6 +89,30 @@ code{font:14px ui-monospace,Consolas,monospace;background:var(--soft);padding:1p
 .cap{margin-top:10px;padding:10px 14px;background:var(--soft);border-radius:8px;min-height:92px}
 .cap strong{font-family:system-ui,sans-serif}
 @media (prefers-reduced-motion:reduce){#iamfig *{animation-duration:.01s!important;transition:none!important}}
+
+pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:13.5px;line-height:1.5;margin:.6rem 0}
+pre code{background:none;padding:0}
+#fig2{display:block;min-width:720px;width:100%;height:auto}
+#fig2 text{font:13px system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--ink)}
+#fig2 .m{fill:var(--muted);font-size:11.5px}
+#fig2 .b{font-weight:700}
+#fig2 .acc{fill:var(--accent)}
+#fig2 .acct{fill:none;stroke:var(--line);stroke-width:2}
+#fig2 .ssm{fill:var(--soft);stroke:var(--accent);stroke-width:2}
+#fig2 .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:all .5s}
+#fig2 .chip{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:all .5s}
+#fig2 .line{stroke:var(--muted);stroke-width:2;stroke-dasharray:6 4;fill:none;animation:dash 1s linear infinite}
+#fig2 .okc{fill:var(--ok)}#fig2 .goldc{fill:var(--gold)}#fig2 .accc{fill:var(--accent)}
+#fig2 text.okt{fill:var(--ok);font-weight:700}
+#fig2 .o1,#fig2 .o2,#fig2 .o3,#fig2 .o4,#fig2 .o5,#fig2 .o6{display:none}
+#fig2.on1 .o1,#fig2.on2 .o2,#fig2.on3 .o3,#fig2.on4 .o4,#fig2.on5 .o5,#fig2.on6 .o6{display:inline}
+#fig2.on1 .nd{stroke:var(--accent);stroke-width:3}
+#fig2.on2 .c2,#fig2.on3 .c3,#fig2.on4 .c4,#fig2.on5 .c5,#fig2.on6 .c6{fill:var(--soft);stroke:var(--accent);stroke-width:3}
+.pk{animation-fill-mode:forwards}
+@keyframes a1{from{transform:translate(200px,230px)}to{transform:translate(690px,110px)}}
+@keyframes a2{from{transform:translate(200px,230px)}to{transform:translate(690px,230px)}}
+@keyframes a3{from{transform:translate(200px,230px)}to{transform:translate(690px,350px)}}
+@keyframes kt{from{transform:translate(580px,357px)}to{transform:translate(700px,128px)}}
 </style>
 </head>
 <body>
@@ -97,8 +121,8 @@ code{font:14px ui-monospace,Consolas,monospace;background:var(--soft);padding:1p
 <h2>Systems Operations on AWS</h2>
 <ol>
 <li class="done"><a href="#module-0">0. Welcome and overview</a></li>
-<li class="now"><a href="#module-1">1. Understanding systems operations</a></li>
-<li>2. Tooling and automation</li>
+<li class="done"><a href="#module-1">1. Understanding systems operations</a></li>
+<li class="now"><a href="#module-2">2. Tooling and automation</a></li>
 <li>3. Computing servers</li>
 <li>4. Computing, scaling, name resolution</li>
 <li>5. Containers and serverless</li>
@@ -295,6 +319,231 @@ code{font:14px ui-monospace,Consolas,monospace;background:var(--soft);padding:1p
 </div>
 </article>
 
+
+<!-- ===================== MODULE 2 ===================== -->
+<article id="module-2" style="margin-top:4rem;padding-top:2rem;border-top:2px solid var(--line)">
+<span class="tag">Module 2</span>
+<h2 style="margin-top:.4rem">Tooling and Automation</h2>
+
+<div class="box"><strong>Objectives.</strong> By the end of this module I can:
+<ul>
+<li>Explain the purpose of AWS Systems Manager and its main features.</li>
+<li>Explain what AWS Tools for PowerShell is for.</li>
+<li>Identify other tools for automation: SDKs, AWS CloudFormation, AWS OpsWorks.</li>
+<li>Host a static website on Amazon S3.</li>
+</ul></div>
+
+<h2>1. The big idea: automate instead of click</h2>
+<p>You can manage AWS by clicking in the Console, but clicking does not scale: it is slow, hard to repeat, and mistakes sneak in. This module is about managing AWS with <strong>commands, scripts, templates and schedules</strong>. This idea is called <strong>infrastructure as code</strong>: the setup of your systems is written as text that a tool can run again and again with the same result.</p>
+
+<h2>2. AWS Systems Manager</h2>
+<p>Systems Manager is a service to <strong>manage many servers from one place</strong>, in AWS or on-premises. It can collect software inventory, apply OS patches, create system images and configure Windows and Linux. You choose the instances, define the task, and Systems Manager does it.</p>
+<div class="box note"><strong>To be "managed", an instance needs three things.</strong> (1) The <strong>SSM Agent</strong> running on it, (2) an <strong>IAM role</strong> attached to it (an instance profile, for example with the managed policy <code>AmazonSSMManagedInstanceCore</code>), and (3) a network path to Systems Manager. This is the IAM role idea from Module 1 in action.</div>
+
+<h3>The big picture, animated</h3>
+<div class="fig">
+<div class="figscroll">
+<svg id="fig2" class="on1" viewBox="0 0 900 440" role="img" aria-label="Animated diagram of AWS Systems Manager managing EC2 instances and an on-premises server">
+<rect class="acct" x="10" y="10" width="880" height="420" rx="14"/>
+<rect class="box" x="30" y="180" width="170" height="100" rx="10"/>
+<text class="b" x="115" y="222" text-anchor="middle">You</text><text class="m" x="115" y="242" text-anchor="middle">Console, CLI or SDK</text>
+<line class="line" x1="200" y1="230" x2="300" y2="230"/>
+<rect class="ssm" x="300" y="40" width="300" height="350" rx="10"/>
+<text class="b acc" x="450" y="62" text-anchor="middle">AWS Systems Manager</text>
+<rect class="chip c2" x="320" y="76" width="260" height="34" rx="8"/><text x="450" y="98" text-anchor="middle">Run Command</text>
+<rect class="chip c3" x="320" y="120" width="260" height="34" rx="8"/><text x="450" y="142" text-anchor="middle">Session Manager</text>
+<rect class="chip c4" x="320" y="164" width="260" height="34" rx="8"/><text x="450" y="186" text-anchor="middle">Patch Manager</text>
+<rect class="chip c4" x="320" y="208" width="260" height="34" rx="8"/><text x="450" y="230" text-anchor="middle">Maintenance Windows</text>
+<rect class="chip c5" x="320" y="252" width="260" height="34" rx="8"/><text x="450" y="274" text-anchor="middle">State Manager</text>
+<rect class="chip c5" x="320" y="296" width="260" height="34" rx="8"/><text x="450" y="318" text-anchor="middle">Parameter Store</text>
+<rect class="chip c6" x="320" y="340" width="260" height="34" rx="8"/><text x="450" y="362" text-anchor="middle">Inventory</text>
+<rect class="box nd" x="680" y="70" width="190" height="80" rx="8"/><text class="b" x="775" y="100" text-anchor="middle">EC2 web-1</text><text class="m" x="775" y="120" text-anchor="middle">SSM Agent</text>
+<rect class="box nd" x="680" y="190" width="190" height="80" rx="8"/><text class="b" x="775" y="220" text-anchor="middle">EC2 web-2</text><text class="m" x="775" y="240" text-anchor="middle">SSM Agent</text>
+<rect class="box nd" x="680" y="310" width="190" height="80" rx="8"/><text class="b" x="775" y="340" text-anchor="middle">On-premises server</text><text class="m" x="775" y="360" text-anchor="middle">SSM Agent</text>
+<line class="line" x1="600" y1="110" x2="680" y2="110"/><line class="line" x1="600" y1="230" x2="680" y2="230"/><line class="line" x1="600" y1="350" x2="680" y2="350"/>
+
+<g class="o1"><text class="b acc" x="775" y="412" text-anchor="middle">Each has an IAM role + SSM Agent</text></g>
+<g class="o2"><g class="pk" style="animation:a1 2.4s ease-in-out forwards"><circle class="accc" r="8"/></g><g class="pk" style="animation:a2 2.4s ease-in-out forwards"><circle class="accc" r="8"/></g><g class="pk" style="animation:a3 2.4s ease-in-out forwards"><circle class="accc" r="8"/></g>
+<text class="b acc" x="115" y="316" text-anchor="middle">one command</text><text class="m" x="115" y="334" text-anchor="middle">runs on all targets</text></g>
+<g class="o3"><g class="pk" style="animation:a1 2.4s ease-in-out forwards"><circle class="okc" r="8"/></g>
+<text class="b acc" x="115" y="316" text-anchor="middle">shell in the browser</text><text class="m" x="115" y="334" text-anchor="middle">no port 22, no SSH keys, no bastion</text></g>
+<g class="o4"><text class="b acc" x="115" y="316" text-anchor="middle">Sun 02:00 window</text><text class="m" x="115" y="334" text-anchor="middle">patch baseline approves patches</text>
+<text class="okt" x="775" y="136" text-anchor="middle" style="animation:fin .5s .8s both">patched</text><text class="okt" x="775" y="256" text-anchor="middle" style="animation:fin .5s 1.3s both">patched</text><text class="okt" x="775" y="376" text-anchor="middle" style="animation:fin .5s 1.8s both">patched</text></g>
+<g class="o5"><g class="pk" style="animation:kt 2.4s ease-in-out forwards"><circle class="goldc" r="9"/><text x="-110" y="-14">db password (SecureString)</text></g>
+<text class="okt" x="775" y="136" text-anchor="middle" style="animation:fin .5s 1.6s both">state applied</text><text class="okt" x="775" y="256" text-anchor="middle" style="animation:fin .5s 1.9s both">state applied</text><text class="okt" x="775" y="376" text-anchor="middle" style="animation:fin .5s 2.2s both">state applied</text></g>
+<g class="o6"><g class="pk" style="animation:a1 2.4s ease-in-out reverse forwards"><circle class="okc" r="8"/></g><g class="pk" style="animation:a2 2.4s ease-in-out reverse forwards"><circle class="okc" r="8"/></g><g class="pk" style="animation:a3 2.4s ease-in-out reverse forwards"><circle class="okc" r="8"/></g>
+<text class="b acc" x="115" y="316" text-anchor="middle">data flows back</text><text class="m" x="115" y="334" text-anchor="middle">software, files, services, updates</text><text class="m" x="450" y="412" text-anchor="middle">Every action can be logged by AWS CloudTrail</text></g>
+</svg>
+</div>
+<div class="figctl">
+<button type="button" id="g2Prev">Previous</button><button type="button" id="g2Play">Play</button><button type="button" id="g2Next">Next</button><button type="button" id="g2Re">Replay step</button><span class="cnt" id="g2Cnt"></span>
+</div>
+<div class="cap" aria-live="polite"><strong id="g2T"></strong><p id="g2D" style="margin:.3rem 0 0"></p></div>
+</div>
+
+<h3>Features at a glance</h3>
+<table>
+<tr><th>Feature</th><th>What it does</th><th>Remember it as</th></tr>
+<tr><td>Run Command</td><td>Remotely runs scripts or commands on many instances, with no bastion host and no SSH keys. IAM controls who can do it; CloudTrail records it.</td><td>"Remote control, one command, many servers"</td></tr>
+<tr><td>Session Manager</td><td>Interactive browser-based shell to an instance. No inbound ports open, no bastion, no SSH keys, and the session is logged.</td><td>"Secure remote terminal"</td></tr>
+<tr><td>Patch Manager</td><td>Automates OS patching using a patch baseline and a maintenance window.</td><td>"Automatic updates, with rules"</td></tr>
+<tr><td>Maintenance Windows</td><td>Schedules recurring tasks (such as patching) with limits on concurrency and error rate.</td><td>"A calendar for admin work"</td></tr>
+<tr><td>State Manager</td><td>Keeps instances in a state you define (software installed, agents updated, settings applied), on a schedule.</td><td>"Keep servers the way I want them"</td></tr>
+<tr><td>Automation</td><td>Runs multi-step workflows defined in an SSM document (restart unreachable instances, create golden AMIs, patch).</td><td>"A recipe of steps"</td></tr>
+<tr><td>Parameter Store</td><td>Stores passwords, keys, license codes and database strings outside your code. IAM controls access and AWS KMS can encrypt them.</td><td>"A safe for secrets and settings"</td></tr>
+<tr><td>Inventory</td><td>Collects software and configuration data (applications, network settings, files, updates, Windows services) without logging in to each machine.</td><td>"A census of my servers"</td></tr>
+<tr><td>Built-In Insights</td><td>A dashboard combining CloudTrail calls, AWS Config changes, inventory and patch compliance.</td><td>"One dashboard"</td></tr>
+</table>
+
+<h3>The workflows you must know</h3>
+<div class="box"><strong>Patch Manager.</strong> The problems it solves: patching takes time, is repetitive, errors cause downtime, and compliance must be proven.
+<ol class="plain"><li>Create a <strong>patch baseline</strong> (rules that approve or reject patches).</li><li>Define a <strong>maintenance window</strong> and group instances into a patch group.</li><li><strong>Apply patches</strong> in the window and reboot every instance in the group.</li><li><strong>Review</strong> results and patch compliance.</li></ol></div>
+<div class="box"><strong>Maintenance Windows.</strong>
+<ol class="plain"><li>Create the window.</li><li>Assign <strong>targets</strong>.</li><li>Assign <strong>tasks</strong>: Run Command, Automation workflows, AWS Step Functions workflows, or AWS Lambda functions.</li><li>Review task status afterwards.</li></ol></div>
+<div class="box"><strong>State Manager.</strong>
+<ol class="plain"><li>Create (or pick) an <strong>SSM document</strong> in JSON or YAML that defines the actions.</li><li><strong>Associate</strong> instances with the document and set a <strong>schedule</strong>.</li><li>Optionally write the output to an Amazon S3 bucket.</li></ol></div>
+<div class="box"><strong>Automation (build and test).</strong>
+<ol class="plain"><li>Create an automation document or use a template (sequential steps and parameters).</li><li>Run it (launch an instance, take a snapshot, tag, delete old images, terminate an instance).</li><li>Monitor it, then confirm the result, for example by launching a test instance from the AMI it updated.</li></ol></div>
+
+<div class="box note"><strong>Parameter Store gotcha.</strong> SSM documents do not support references to <em>SecureString</em> parameters. To use a SecureString with Run Command, first retrieve the value, then pass it in. <strong>Naming note:</strong> the slides say Amazon CloudWatch Events can trigger automations. That service is now called <em>Amazon EventBridge</em>.</div>
+
+<h3>Run Command or Session Manager?</h3>
+<table>
+<tr><th>I want to...</th><th>Use</th></tr>
+<tr><td>Run a known script on many instances at once</td><td>Run Command</td></tr>
+<tr><td>Open an interactive shell on one instance to investigate</td><td>Session Manager</td></tr>
+<tr><td>Do the same thing every Sunday night</td><td>Maintenance Windows</td></tr>
+<tr><td>Make sure a setting never stays wrong</td><td>State Manager</td></tr>
+</table>
+
+<h2>3. AWS Tools for PowerShell</h2>
+<p>A set of <strong>cmdlets</strong> (PowerShell commands, named <code>Verb-Noun</code>) to script AWS from PowerShell. They do the same jobs as the AWS CLI and support the same services and Regions as the AWS SDKs. Useful for quick tasks: security groups, launching instances, S3 buckets, IAM tasks, CloudWatch metrics.</p>
+<table>
+<tr><th>Task</th><th>PowerShell</th><th>AWS CLI equivalent</th></tr>
+<tr><td>Launch an instance</td><td><code>New-EC2Instance -ImageId ami-xxxx -InstanceType t3.micro</code></td><td><code>aws ec2 run-instances</code></td></tr>
+<tr><td>View instances by reservation</td><td><code>Get-EC2Instance -Filter @{Name="reservation-id";Values="r-xxxx"}</code></td><td><code>aws ec2 describe-instances --filters Name=reservation-id,Values=r-xxxx</code></td></tr>
+<tr><td>Create a security group</td><td><code>New-EC2SecurityGroup -GroupName web-sg -Description "web" -VpcId vpc-xxxx</code></td><td><code>aws ec2 create-security-group</code></td></tr>
+<tr><td>View a security group</td><td><code>Get-EC2SecurityGroup -GroupId sg-xxxx</code></td><td><code>aws ec2 describe-security-groups</code></td></tr>
+<tr><td>Create an S3 bucket</td><td><code>New-S3Bucket -BucketName my-bucket</code></td><td><code>aws s3 mb s3://my-bucket</code></td></tr>
+<tr><td>Create an IAM group</td><td><code>New-IAMGroup -GroupName Developers</code></td><td><code>aws iam create-group</code></td></tr>
+<tr><td>Create an IAM user</td><td><code>New-IAMUser -UserName maria</code></td><td><code>aws iam create-user</code></td></tr>
+<tr><td>Add a user to a group</td><td><code>Add-IAMUserToGroup -GroupName Developers -UserName maria</code></td><td><code>aws iam add-user-to-group</code></td></tr>
+</table>
+
+<h2>4. SDKs and APIs</h2>
+<p>An <strong>API</strong> is how any program talks to an AWS service. An <strong>SDK</strong> (software development kit) wraps those APIs in a specific programming language so developers can use AWS inside their code without writing the low-level calls. The Console and the CLI use the same APIs underneath. This is what makes "infrastructure as code" possible. Each SDK comes with a getting started guide, developer guide, API reference and community forums.</p>
+
+<h2>5. AWS CloudFormation</h2>
+<p>You describe a whole infrastructure in one <strong>template</strong> (JSON or YAML). CloudFormation builds it as a <strong>stack</strong>, a group of resources managed as a single unit (EC2, RDS, VPC...). Create, update or delete the stack and all its resources follow.</p>
+<ul>
+<li><strong>Change preview:</strong> see what an update would change (does it delete or replace something critical?) before running it.</li>
+<li><strong>Drift detection:</strong> checks whether the real resources still match the template.</li>
+<li><strong>Custom extensions:</strong> use AWS Lambda for custom logic, such as looking up the newest AMI ID.</li>
+</ul>
+<pre><code>AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket</code></pre>
+
+<h2>6. AWS OpsWorks</h2>
+<p>A configuration management service that provides managed <strong>Chef</strong> and <strong>Puppet</strong>, tools that configure servers using code, on EC2 or on-premises. Three offerings: OpsWorks for Chef Automate, OpsWorks for Puppet Enterprise, and OpsWorks Stacks. It automates infrastructure, application management, compliance testing and configuration tasks.</p>
+<p class="empty">Note: AWS has been retiring OpsWorks offerings. Know it for the course, but check the current AWS docs before using it in a real project.</p>
+
+<h2>7. Hosting a static website on Amazon S3</h2>
+<p>A <strong>static website</strong> is made of pages with fixed content (plus optional client-side scripts) and no server-side processing. S3 can host one without any servers.</p>
+<ol class="plain">
+<li>Create a bucket.</li>
+<li>Enable website hosting on it, give the <strong>index document</strong> name (for example <code>index.html</code>) and allow public read of the content.</li>
+<li>Upload the site (Console or CLI), with a folder structure that matches the site.</li>
+<li>Open the <strong>endpoint URL</strong>: <code>bucket-name.s3-website-region.amazonaws.com</code> (dash) or <code>bucket-name.s3-website.region.amazonaws.com</code> (dot). The separator depends on the Region (Oregon uses a dash, Frankfurt a dot).</li>
+</ol>
+<p><strong>Custom domain.</strong> Use Amazon Route 53 to map your own domain. Create <em>two</em> buckets named exactly like the domain and the subdomain (<code>mompopcafe.com</code> and <code>www.mompopcafe.com</code>): one holds the content, the other redirects to it. Route 53 <strong>alias records</strong> point each name to its bucket endpoint.</p>
+<p class="empty">New S3 buckets block public access by default, so to make the site public you must turn off Block Public Access for that bucket and add a bucket policy allowing reads. Only do that for website content.</p>
+
+<h2>8. CLI cheat sheet for this module</h2>
+<pre><code># --- Systems Manager ---
+aws ssm describe-instance-information                  # which instances are managed?
+aws ssm send-command --document-name "AWS-RunShellScript" \
+  --targets "Key=instanceids,Values=i-0abc123" \
+  --parameters 'commands=["uptime"]'                   # Run Command
+aws ssm list-command-invocations --command-id CMD_ID --details
+aws ssm start-session --target i-0abc123               # Session Manager (needs the plugin)
+aws ssm put-parameter --name /app/db/password --value 'S3cret' --type SecureString
+aws ssm get-parameter --name /app/db/password --with-decryption
+aws ssm create-association --name AWS-GatherSoftwareInventory \
+  --targets "Key=instanceids,Values=i-0abc123"        # State Manager
+aws ssm describe-patch-baselines
+aws ssm send-command --document-name AWS-RunPatchBaseline \
+  --targets "Key=instanceids,Values=i-0abc123" --parameters Operation=Scan
+aws ssm create-maintenance-window --name SundayPatch \
+  --schedule "cron(0 2 ? * SUN *)" --duration 3 --cutoff 1 --no-allow-unassociated-targets
+aws ssm start-automation-execution --document-name AWS-RestartEC2Instance \
+  --parameters InstanceId=i-0abc123
+
+# --- CloudFormation ---
+aws cloudformation validate-template --template-body file://template.yaml
+aws cloudformation create-stack --stack-name demo --template-body file://template.yaml
+aws cloudformation describe-stacks --stack-name demo
+aws cloudformation create-change-set --stack-name demo --change-set-name c1 \
+  --template-body file://template.yaml                 # preview changes
+aws cloudformation detect-stack-drift --stack-name demo
+aws cloudformation delete-stack --stack-name demo
+
+# --- S3 static website ---
+aws s3 mb s3://my-site-bucket
+aws s3 website s3://my-site-bucket --index-document index.html
+aws s3 sync ./site s3://my-site-bucket</code></pre>
+
+<h2>9. Self-check</h2>
+<details><summary>What does an instance need so Systems Manager can manage it?</summary><p>The SSM Agent, an IAM instance profile role, and network access to Systems Manager.</p></details>
+<details><summary>Why is Session Manager safer than SSH?</summary><p>No inbound ports to open, no bastion host, no SSH keys to manage, and sessions are logged and auditable.</p></details>
+<details><summary>Give the four Patch Manager steps.</summary><p>Create a patch baseline, define a maintenance window and patch group, apply patches and reboot, review compliance.</p></details>
+<details><summary>Which tool keeps instances in a defined state on a schedule?</summary><p>State Manager, using an SSM document and an association.</p></details>
+<details><summary>Where should I keep a database password instead of in code?</summary><p>Systems Manager Parameter Store, as a SecureString encrypted with AWS KMS.</p></details>
+<details><summary>What are a CloudFormation stack, change preview and drift detection?</summary><p>A stack is the group of resources built from a template. A change preview shows what an update would change. Drift detection checks whether resources still match the template.</p></details>
+<details><summary>Why do you need two buckets for mompopcafe.com and www.mompopcafe.com?</summary><p>One holds the website content and the other redirects to it. Bucket names must match the domain names, and Route 53 alias records point each name to its bucket.</p></details>
+
+<h2>10. Module checklist</h2>
+<div class="box" id="checklist2">
+<label class="chk"><input type="checkbox"> I can explain each Systems Manager feature in one sentence</label>
+<label class="chk"><input type="checkbox"> I know the Patch Manager, Maintenance Window and State Manager steps</label>
+<label class="chk"><input type="checkbox"> I can say what PowerShell, SDKs, CloudFormation and OpsWorks are for</label>
+<label class="chk"><input type="checkbox"> I know how to host a static website on S3</label>
+<label class="chk"><input type="checkbox"> I verified my "What I learned" notes with my instructor</label>
+</div>
+
+<h2>What I learned</h2>
+<div class="learned" id="learned-2">
+<p><strong>Big idea.</strong> Automate repetitive work with commands, scripts, templates and schedules instead of clicking. This is infrastructure as code.</p>
+<h3>AWS Systems Manager (SSM)</h3>
+<p>Manages servers from one place, in AWS or on-premises: collects software inventory, applies OS patches, creates system images, and configures Windows and Linux. I choose the instances and define the task; Systems Manager does it.</p>
+<p><strong>An instance must have three things to be managed:</strong> the <strong>SSM Agent</strong> (it connects the instance to Systems Manager and executes the operations), an <strong>IAM role</strong> with a policy that lets the agent communicate, and a <strong>network path</strong> to Systems Manager.</p>
+<table>
+<tr><th>Feature</th><th>What it does</th></tr>
+<tr><td>Run Command</td><td>Runs a command or script on many instances now, with no SSH keys or bastion. Logged by CloudTrail.</td></tr>
+<tr><td>Session Manager</td><td>Interactive shell with no SSH keys, no bastion and no inbound ports. The agent connects outward over HTTPS, and sessions are logged.</td></tr>
+<tr><td>Patch Manager</td><td>A patch baseline holds the rules that approve or reject patches. Patching runs inside a maintenance window, then reboot and compliance review.</td></tr>
+<tr><td>Maintenance Windows</td><td>Schedules recurring tasks with limits on concurrency and error rate. Tasks: Run Command, Automation, Step Functions, Lambda.</td></tr>
+<tr><td>State Manager</td><td>Keeps instances in a desired state using an SSM document plus an association with a schedule. It re-checks and fixes misconfiguration.</td></tr>
+<tr><td>Automation</td><td>A recipe of steps defined in an SSM document (JSON or YAML) that can run on many resources: patch, create golden AMIs, restart instances.</td></tr>
+<tr><td>Parameter Store</td><td>Stores keys, credentials and database strings outside files, defined once and reused in scripts and templates. IAM controls access; SecureString is encrypted with KMS.</td></tr>
+<tr><td>Inventory</td><td>Collects software and configuration data from groups of servers without logging in to each one.</td></tr>
+</table>
+<p><strong>Run Command vs State Manager vs Automation.</strong> Run Command: "run this now". State Manager: "keep it in this state, on a schedule". Automation: "do this multi-step procedure".</p>
+<h3>Other automation tools</h3>
+<ul>
+<li><strong>AWS Tools for PowerShell:</strong> <code>Verb-Noun</code> cmdlets to create IAM groups, security groups, launch instances and more, from PowerShell. Same jobs as the AWS CLI.</li>
+<li><strong>APIs and SDKs:</strong> an API is how a program talks to a service. An SDK wraps the APIs in a language: Java, Python, .NET, JavaScript/Node.js, Go, PHP, C++, Ruby and others.</li>
+<li><strong>AWS CloudFormation:</strong> a JSON or YAML template defines a stack of resources, so a whole infrastructure can be created, updated and deleted together. It offers change preview and drift detection.</li>
+<li><strong>AWS OpsWorks:</strong> managed Chef and Puppet (configuration management, similar in role to Ansible). AWS has been retiring it.</li>
+</ul>
+<h3>Static website on Amazon S3</h3>
+<ol class="plain"><li>Create an S3 bucket.</li><li>Enable website hosting, name the index document, and allow public read (new buckets block public access by default).</li><li>Upload the website files.</li><li>Open the endpoint URL.</li></ol>
+<p>For a custom domain, use Route 53 alias records and two buckets named like the domain and subdomain.</p>
+<p><strong>Corrections I made.</strong> It is "Systems Manager", not "AWS manager". "Rudy" is Ruby. Run Command is for commands and scripts on many instances, not a single command. OpsWorks provides Chef and Puppet, not Ansible. Patch Manager's baseline only holds the rules; patching happens in a maintenance window.</p>
+</div>
+</article>
+
 <!-- ===== NEXT MODULE: copy the <article> above, change ids and content ===== -->
 </main>
 </div>
@@ -338,6 +587,29 @@ document.getElementById('fPrev').onclick=()=>{stop();go(n-1)};
 document.getElementById('fRe').onclick=()=>{stop();go(n)};
 P.onclick=play;
 go(1);
+})();
+
+(function(){
+const S=[
+["Managed nodes","Systems Manager manages EC2 instances and on-premises servers. Each one needs the SSM Agent and an IAM role. Without these, Systems Manager cannot see or control it."],
+["Run Command","You send one command and it runs on all the selected targets. No bastion host and no SSH keys. IAM decides who may do it and CloudTrail records it."],
+["Session Manager","An interactive shell in your browser to one instance. No inbound port 22 to open, no SSH keys, and the session is logged for audit."],
+["Patch Manager and Maintenance Windows","A patch baseline approves or rejects patches. A maintenance window runs the patching on a schedule, with limits on how many run at once and how many errors are allowed."],
+["State Manager and Parameter Store","State Manager keeps instances in the state defined in an SSM document, on a schedule. Parameter Store holds secrets such as the database password, so they are never hard-coded."],
+["Inventory and results","Instances report back what software, files, services and updates they have, without anyone logging in to each machine. Insights shows it in one dashboard, and CloudTrail records the actions."]];
+const svg=document.getElementById('fig2');if(!svg)return;
+const T=document.getElementById('g2T'),D=document.getElementById('g2D'),C=document.getElementById('g2Cnt'),P=document.getElementById('g2Play');
+let n=1,timer=null;
+function go(k){n=Math.max(1,Math.min(S.length,k));svg.setAttribute('class','');void svg.getBoundingClientRect();svg.setAttribute('class','on'+n);
+T.textContent=n+'. '+S[n-1][0];D.textContent=S[n-1][1];C.textContent='Step '+n+' of '+S.length;}
+function stop(){clearInterval(timer);timer=null;P.textContent='Play'}
+function play(){if(timer){stop();return}if(n===S.length)go(1);P.textContent='Pause';timer=setInterval(()=>{if(n>=S.length){stop();return}go(n+1)},6000)}
+document.getElementById('g2Next').onclick=()=>{stop();go(n+1)};
+document.getElementById('g2Prev').onclick=()=>{stop();go(n-1)};
+document.getElementById('g2Re').onclick=()=>{stop();go(n)};
+P.onclick=play;go(1);
+try{const bx=[...document.querySelectorAll('#checklist2 input')];const sv=JSON.parse(localStorage.getItem('m2-checks')||'[]');
+bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m2-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
 })();
 </script>
 </body>
