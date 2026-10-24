@@ -113,6 +113,29 @@ pre code{background:none;padding:0}
 @keyframes a2{from{transform:translate(200px,230px)}to{transform:translate(690px,230px)}}
 @keyframes a3{from{transform:translate(200px,230px)}to{transform:translate(690px,350px)}}
 @keyframes kt{from{transform:translate(580px,357px)}to{transform:translate(700px,128px)}}
+
+#fig3{display:block;min-width:720px;width:100%;height:auto}
+#fig3 text{font:13px system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--ink)}
+#fig3 .m{fill:var(--muted);font-size:11.5px}
+#fig3 .b{font-weight:700}
+#fig3 .acc{fill:var(--accent)}
+#fig3 .acct{fill:none;stroke:var(--line);stroke-width:2}
+#fig3 .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:all .5s}
+#fig3 .inst{fill:var(--soft);stroke:var(--accent);stroke-width:2;transition:all .5s}
+#fig3 .line{stroke:var(--muted);stroke-width:2;stroke-dasharray:6 4;fill:none;animation:dash 1s linear infinite}
+#fig3 .okc{fill:var(--ok)}#fig3 .goldc{fill:var(--gold)}#fig3 .accc{fill:var(--accent)}#fig3 .badc{fill:var(--bad)}
+#fig3 text.okt{fill:var(--ok);font-weight:700}
+#fig3 text.badt{fill:var(--bad);font-weight:700}
+#fig3 .n2{opacity:0;transition:opacity .6s}
+#fig3.ge2 .n2{opacity:1}
+#fig3 .o1,#fig3 .o2,#fig3 .o3,#fig3 .o4,#fig3 .o5{display:none}
+#fig3.on1 .o1,#fig3.on2 .o2,#fig3.on3 .o3,#fig3.on4 .o4,#fig3.on5 .o5{display:inline}
+#fig3.on3 .meta,#fig3.on4 .you,#fig3.on5 .inst{stroke:var(--accent);stroke-width:4}
+#fig3.on5 .inst{stroke:var(--bad)}
+@keyframes b1{from{transform:translate(190px,220px)}to{transform:translate(340px,220px)}}
+@keyframes bd{0%{transform:translate(190px,220px)}50%{transform:translate(322px,220px)}58%{transform:translate(330px,220px)}66%{transform:translate(316px,220px)}100%{transform:translate(190px,220px)}}
+@keyframes m1{from{transform:translate(600px,205px)}to{transform:translate(700px,205px)}}
+@keyframes m2{from{transform:translate(700px,238px)}to{transform:translate(600px,238px)}}
 </style>
 </head>
 <body>
@@ -122,8 +145,8 @@ pre code{background:none;padding:0}
 <ol>
 <li class="done"><a href="#module-0">0. Welcome and overview</a></li>
 <li class="done"><a href="#module-1">1. Understanding systems operations</a></li>
-<li class="now"><a href="#module-2">2. Tooling and automation</a></li>
-<li>3. Computing servers</li>
+<li class="done"><a href="#module-2">2. Tooling and automation</a></li>
+<li class="now"><a href="#module-3">3. Computing servers</a></li>
 <li>4. Computing, scaling, name resolution</li>
 <li>5. Containers and serverless</li>
 <li>6. Database services</li>
@@ -544,6 +567,235 @@ aws s3 sync ./site s3://my-site-bucket</code></pre>
 </div>
 </article>
 
+
+<!-- ===================== MODULE 3 ===================== -->
+<article id="module-3" style="margin-top:4rem;padding-top:2rem;border-top:2px solid var(--line)">
+<span class="tag">Module 3</span>
+<h2 style="margin-top:.4rem">Computing (Servers)</h2>
+
+<div class="box"><strong>Objectives</strong> (inferred from the slides I was given). By the end of this module I can:
+<ul>
+<li>Explain what user data and instance metadata are and how to read them.</li>
+<li>Explain EC2 key pairs and how to log in to Linux and Windows instances.</li>
+<li>Explain how access to a whole fleet of instances can be managed.</li>
+<li>Use instance protections: console screenshot, termination protection, source/destination check.</li>
+<li>Launch an instance with <code>aws ec2 run-instances</code>.</li>
+<li>Apply it all to a case study: a LAMP web server for Mom &amp; Pop Café.</li>
+</ul></div>
+<div class="box note"><strong>Heads up.</strong> The slides you pasted skip the EC2 basics ("described in the previous slides"), so here is a short refresher. If your platform's earlier slides add details I haven't covered, send them and I'll extend this section.</div>
+
+<h2>1. EC2 refresher</h2>
+<p><strong>Amazon EC2</strong> gives you virtual servers (<strong>instances</strong>) on demand. To launch one you choose:</p>
+<table>
+<tr><th>Choice</th><th>Meaning</th><th><code>run-instances</code> option</th></tr>
+<tr><td>AMI</td><td>The template: operating system plus software</td><td><code>--image-id</code></td></tr>
+<tr><td>Instance type</td><td>The size: CPU, memory, network</td><td><code>--instance-type</code></td></tr>
+<tr><td>Key pair</td><td>How you will log in</td><td><code>--key-name</code></td></tr>
+<tr><td>Security group</td><td>The instance firewall</td><td><code>--security-group-ids</code></td></tr>
+<tr><td>Subnet</td><td>Where it lives in your VPC (optional: default subnet of the default VPC)</td><td><code>--subnet-id</code></td></tr>
+<tr><td>User data</td><td>A script to run at first boot</td><td><code>--user-data</code></td></tr>
+<tr><td>Tags</td><td>Labels such as <code>Name</code></td><td><code>--tag-specifications</code></td></tr>
+</table>
+
+<h3>The big picture, animated</h3>
+<div class="fig">
+<div class="figscroll">
+<svg id="fig3" class="on1 ge1" viewBox="0 0 900 440" role="img" aria-label="Animated diagram: launching an EC2 instance, user data, metadata, key pair login and protections">
+<rect class="acct" x="10" y="10" width="880" height="420" rx="14"/>
+<rect class="box you" x="30" y="170" width="160" height="100" rx="10"/>
+<text class="b" x="110" y="212" text-anchor="middle">You</text><text class="m" x="110" y="232" text-anchor="middle">CLI or Console</text>
+<line class="line" x1="190" y1="220" x2="330" y2="220"/>
+<rect class="box" x="330" y="26" width="270" height="44" rx="8"/><text class="b" x="465" y="53" text-anchor="middle">AMI: OS + software template</text>
+<g class="inst-g"><g class="inst-wrap" style="animation:none"><rect class="inst" x="330" y="90" width="270" height="290" rx="10"/></g></g>
+<text class="b acc" x="345" y="114">EC2 instance (Amazon Linux)</text>
+<g class="n2"><rect class="box" x="350" y="130" width="110" height="38" rx="8"/><text x="405" y="154" text-anchor="middle">Linux</text>
+<rect class="box" x="470" y="130" width="110" height="38" rx="8"/><text x="525" y="154" text-anchor="middle">Apache</text>
+<rect class="box" x="350" y="178" width="110" height="38" rx="8"/><text x="405" y="202" text-anchor="middle">MariaDB</text>
+<rect class="box" x="470" y="178" width="110" height="38" rx="8"/><text x="525" y="202" text-anchor="middle">PHP</text></g>
+<rect class="box meta" x="700" y="170" width="170" height="100" rx="10"/>
+<text class="b" x="785" y="206" text-anchor="middle">Instance metadata</text><text class="m" x="785" y="226" text-anchor="middle">169.254.169.254</text><text class="m" x="785" y="244" text-anchor="middle">(only from inside)</text>
+
+<g class="o1"><text class="m" x="30" y="300">--image-id (AMI)</text><text class="m" x="30" y="316">--instance-type</text><text class="m" x="30" y="332">--key-name</text><text class="m" x="30" y="348">--security-group-ids</text><text class="m" x="30" y="364">--subnet-id</text><text class="m" x="30" y="380">--user-data</text><text class="m" x="30" y="396">--tag-specifications</text>
+<g class="pk" style="animation:b1 2.2s ease-in-out forwards"><circle class="accc" r="8"/></g>
+<text class="b acc" x="465" y="340" text-anchor="middle" style="animation:fin .6s 1.6s both">instance launched</text></g>
+<g class="o2"><rect class="box" x="350" y="236" width="230" height="74" rx="6"/><text class="m" x="362" y="256">#!/bin/bash</text><text class="m" x="362" y="274">install httpd, php, mariadb</text><text class="m" x="362" y="292">start the services</text>
+<text class="b acc" x="465" y="340" text-anchor="middle">user data runs once, at first boot, as root</text></g>
+<g class="o3"><g class="pk" style="animation:m1 1.4s ease-in-out forwards"><circle class="accc" r="8"/></g><g class="pk" style="animation:m2 1.4s 1.5s ease-in-out both"><circle class="okc" r="8"/></g>
+<text class="m" x="465" y="262" text-anchor="middle">asks: public-hostname? subnet-id? user-data?</text>
+<text class="b acc" x="465" y="340" text-anchor="middle">the instance reads facts about itself</text></g>
+<g class="o4"><g class="pk" style="animation:b1 2.2s ease-in-out forwards"><circle class="goldc" r="9"/></g>
+<text class="b" x="110" y="296" text-anchor="middle">private key (.pem)</text>
+<text class="b acc" x="465" y="262" text-anchor="middle">public key sits on the instance</text>
+<text class="m" x="465" y="340" text-anchor="middle">Linux: SSH. Windows: decrypt the password, then RDP</text></g>
+<g class="o5"><g class="pk" style="animation:bd 2.6s ease-in-out forwards"><circle class="badc" r="8"/></g>
+<text class="badt" x="110" y="296" text-anchor="middle">terminate request</text>
+<text class="badt" x="465" y="262" text-anchor="middle">blocked by termination protection</text>
+<text class="m" x="465" y="340" text-anchor="middle">source/destination check is on (off only for NAT)</text></g>
+</svg>
+</div>
+<div class="figctl">
+<button type="button" id="g3Prev">Previous</button><button type="button" id="g3Play">Play</button><button type="button" id="g3Next">Next</button><button type="button" id="g3Re">Replay step</button><span class="cnt" id="g3Cnt"></span>
+</div>
+<div class="cap" aria-live="polite"><strong id="g3T"></strong><p id="g3D" style="margin:.3rem 0 0"></p></div>
+</div>
+
+<h2>2. User data and instance metadata</h2>
+<table>
+<tr><th></th><th>User data</th><th>Instance metadata</th></tr>
+<tr><td>What</td><td>A script or text <em>you</em> give the instance at launch</td><td>Facts <em>AWS</em> knows about the instance (ID, hostname, subnet, IP...)</td></tr>
+<tr><td>Used for</td><td>Bootstrapping: install and start software automatically</td><td>Letting scripts discover details about themselves</td></tr>
+<tr><td>Address (from inside the instance)</td><td><code>http://169.254.169.254/latest/user-data</code></td><td><code>http://169.254.169.254/latest/meta-data/</code></td></tr>
+</table>
+<p>User data is how Mom &amp; Pop's deployment script becomes <strong>repeatable</strong>: every new instance builds itself the same way. The example from the slides installs a web server:</p>
+<pre><code>#!/bin/bash
+yum update -y
+service httpd start
+chkconfig httpd on</code></pre>
+<p>Read it from <em>outside</em> with the CLI. The value is stored <strong>base64-encoded</strong>, so decode it to read it:</p>
+<pre><code>aws ec2 describe-instance-attribute --instance-id i-1234567890abcdef0 \
+  --attribute userData --output text --query "UserData.Value" | base64 --decode</code></pre>
+<p>Without <code>base64 --decode</code> you see unreadable text starting with <code>IyEvYmluL2Jhc2g...</code>, which is the script encoded. Two more metadata examples from the slides (run them <em>on the instance</em>):</p>
+<pre><code>curl http://169.254.169.254/latest/meta-data/public-hostname
+curl http://169.254.169.254/latest/meta-data/network/interfaces/macs/MAC/subnet-id</code></pre>
+<div class="box note"><strong>Good to know.</strong> (1) New instances usually require the safer <strong>IMDSv2</strong>, which first asks for a token: <code>TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")</code>, then <code>curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-hostname</code>. (2) <strong>Never put passwords in user data</strong>: anyone who can read it will see them. Use Parameter Store from Module 2.</div>
+
+<h2>3. Key pairs and logging in</h2>
+<p>EC2 uses <strong>public-key cryptography</strong>. Picture a padlock and its key: the <strong>public key</strong> is the padlock (AWS puts it on the instance), and the <strong>private key</strong> is the only key that opens it (you keep it). Together they are a <strong>key pair</strong>. You choose a key pair at launch, either creating a new one (download the private key then, because you won't get another chance) or using one you already have.</p>
+<table>
+<tr><th>Instance</th><th>How you log in</th></tr>
+<tr><td>Linux</td><td>No password by default. Connect with SSH using the private key.</td></tr>
+<tr><td>Windows</td><td>Use the private key to <strong>decrypt the Administrator password</strong>, then connect with <strong>RDP</strong>.</td></tr>
+</table>
+<pre><code>aws ec2 create-key-pair --key-name my-key --query KeyMaterial --output text &gt; my-key.pem
+chmod 400 my-key.pem
+ssh -i my-key.pem ec2-user@PUBLIC_DNS_NAME
+
+# Windows: decrypt the Administrator password
+aws ec2 get-password-data --instance-id i-0abc123 --priv-launch-key my-key.pem</code></pre>
+
+<h3>Managing access for a whole fleet</h3>
+<p>The default <code>Administrator</code> or <code>ec2-user</code> is only a starting point. You must decide who gets access and how to remove it when people leave:</p>
+<ul>
+<li><strong>Windows:</strong> AWS Directory Service, to grant and revoke access using existing Windows users and groups.</li>
+<li><strong>Linux:</strong> Kerberos (a network authentication protocol, can be part of single sign-on), or your own key pairs made with <code>ssh-keygen</code>: put each user's public key in <code>~/.ssh/authorized_keys</code> and give them the private key.</li>
+<li><strong>At scale:</strong> baking all users into an AMI is inflexible. Configuration management tools (Chef, Puppet, Ansible) add or remove access across many machines with a few commands.</li>
+</ul>
+<p class="empty">Link to Module 2: Session Manager avoids the problem entirely, with no keys to hand out or revoke.</p>
+
+<h2>4. Instance protections and visibility</h2>
+<table>
+<tr><th>Feature</th><th>What it does</th><th>CLI</th></tr>
+<tr><td>Console screenshot</td><td>Shows what the instance screen looks like, to see its state when you cannot connect.</td><td><code>aws ec2 get-console-screenshot --instance-id i-0abc123</code></td></tr>
+<tr><td>Termination protection</td><td>Stops accidental termination: you must turn it off first.</td><td><code>aws ec2 modify-instance-attribute --instance-id i-0abc123 --disable-api-termination</code> (on) or <code>--no-disable-api-termination</code> (off)</td></tr>
+<tr><td>Source/destination check</td><td>On by default: an instance must be the source or destination of the traffic it handles. A <strong>NAT instance</strong> forwards other machines' traffic, so the check must be <strong>disabled</strong> on it.</td><td><code>aws ec2 modify-instance-attribute --instance-id i-0abc123 --no-source-dest-check</code></td></tr>
+</table>
+
+<h2>5. Launching an instance with the CLI</h2>
+<pre><code>aws ec2 run-instances \
+  --image-id ami-0abcdef1234567890 \
+  --instance-type t3.micro \
+  --key-name my-key \
+  --security-group-ids sg-0abc123 \
+  --subnet-id subnet-0abc123 \
+  --user-data file://userdata.sh \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=cafe-web}]' \
+  --count 1</code></pre>
+<p><code>--subnet-id</code> is optional (default subnet of the default VPC). <code>--tag-specifications</code> labels the instance. The full option list is in the CLI Reference for <code>run-instances</code>: the documentation skill from Module 1 in action. AMI IDs differ per Region, so a script can look up the newest Amazon Linux AMI instead: <code>aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64</code>.</p>
+
+<h2>6. Case study: Mom &amp; Pop Café &amp; Bakery</h2>
+<p><strong>Goals of the project:</strong> experience communication challenges when applying technology to business problems, translate customer requirements into a technical solution, present it, and follow AWS best practices for a <strong>frugal, resilient and secure</strong> solution.</p>
+<h3>The story</h3>
+<ul>
+<li>A customer (Matt) wants to <strong>order coffee online</strong> to avoid waiting.</li>
+<li>The team loves it. The current site has <strong>no database</strong>, which online ordering needs.</li>
+<li>Darsh and Sophie tried a <strong>deployment script</strong> to make deployment repeatable, but it has bugs to troubleshoot.</li>
+<li>The new site uses a <strong>LAMP stack</strong>, all open source and all on one EC2 instance.</li>
+</ul>
+<table>
+<tr><th>Letter</th><th>Component</th><th>Job</th></tr>
+<tr><td>L</td><td>Linux</td><td>Operating system</td></tr>
+<tr><td>A</td><td>Apache</td><td>Web server that answers browsers</td></tr>
+<tr><td>M</td><td>MariaDB</td><td>Database that stores orders and menu</td></tr>
+<tr><td>P</td><td>PHP</td><td>Language that builds dynamic pages and talks to the database</td></tr>
+</table>
+<pre><code>Customer browser  →  Apache  →  PHP  →  MariaDB
+                 (all on one EC2 instance)</code></pre>
+<h3>A user data script for it</h3>
+<p>On current Amazon Linux (2023), packages use <code>dnf</code> and services use <code>systemctl</code> (the slide's <code>yum</code> and <code>chkconfig</code> are the older style):</p>
+<pre><code>#!/bin/bash
+dnf update -y
+dnf install -y httpd php php-mysqli mariadb105-server
+systemctl enable --now httpd
+systemctl enable --now mariadb</code></pre>
+<h3>Troubleshooting the script (checklist)</h3>
+<ul>
+<li>Read the log: <code>/var/log/cloud-init-output.log</code> on the instance.</li>
+<li>Does the first line start with <code>#!/bin/bash</code>?</li>
+<li>Are commands right for this OS (<code>yum</code> vs <code>dnf</code>, <code>service</code> vs <code>systemctl</code>)?</li>
+<li>Does the script use <code>-y</code>? User data cannot answer prompts.</li>
+<li>Can the instance reach the internet to download packages (public IP or NAT, route table, security group)?</li>
+<li>Remember it runs <strong>only at first boot</strong>: after fixing it, launch a new instance to test.</li>
+<li>Read the script back with <code>describe-instance-attribute</code> to confirm what was really passed.</li>
+</ul>
+<h3>Best practices: frugal, resilient, secure (my suggestions)</h3>
+<table>
+<tr><th>Frugal</th><th>Resilient</th><th>Secure</th></tr>
+<tr><td>Small instance type, stop or terminate what is not needed, tag resources to track costs</td><td>Repeatable script or AMI, backups of the database, later a managed database and more than one Availability Zone</td><td>Key pair kept private, narrow security group, IAM role instead of stored keys, no secrets in user data</td></tr>
+</table>
+
+<h2>7. CLI cheat sheet</h2>
+<pre><code>aws ec2 run-instances --image-id ami-xxxx --instance-type t3.micro --key-name my-key
+aws ec2 describe-instances --filters Name=tag:Name,Values=cafe-web
+aws ec2 stop-instances --instance-ids i-0abc123
+aws ec2 start-instances --instance-ids i-0abc123
+aws ec2 terminate-instances --instance-ids i-0abc123
+aws ec2 describe-instance-attribute --instance-id i-0abc123 --attribute userData
+aws ec2 modify-instance-attribute --instance-id i-0abc123 --disable-api-termination
+aws ec2 modify-instance-attribute --instance-id i-0abc123 --no-source-dest-check
+aws ec2 get-console-screenshot --instance-id i-0abc123
+aws ec2 create-key-pair --key-name my-key</code></pre>
+
+<h2>8. Self-check</h2>
+<details><summary>What is the difference between user data and metadata?</summary><p>User data is a script you provide to run at first boot. Metadata is information AWS provides about the instance, read from 169.254.169.254.</p></details>
+<details><summary>Why does <code>describe-instance-attribute</code> need <code>base64 --decode</code>?</summary><p>User data is stored base64-encoded. Decoding turns it back into the readable script.</p></details>
+<details><summary>What does each half of a key pair do, and who holds it?</summary><p>The public key is on the instance (placed by AWS). The private key is kept by you and proves your identity.</p></details>
+<details><summary>How do you log in to a Linux instance vs a Windows instance?</summary><p>Linux: SSH with the private key. Windows: decrypt the Administrator password with the private key, then use RDP.</p></details>
+<details><summary>Why is baking users into an AMI a poor way to manage access?</summary><p>It is inflexible and hard to maintain across AMIs. Directory Service, Kerberos or Chef, Puppet and Ansible handle adding and removing access better.</p></details>
+<details><summary>Which setting must be disabled on a NAT instance, and why?</summary><p>The source/destination check, because a NAT instance forwards traffic that is neither from nor to itself.</p></details>
+<details><summary>What does LAMP stand for, and why use user data for it?</summary><p>Linux, Apache, MariaDB, PHP. A user data script installs and starts them automatically, making each deployment repeatable.</p></details>
+
+<h2>9. Module checklist</h2>
+<div class="box" id="checklist3">
+<label class="chk"><input type="checkbox"> I can explain user data vs metadata and read both</label>
+<label class="chk"><input type="checkbox"> I can explain key pairs and Linux vs Windows login</label>
+<label class="chk"><input type="checkbox"> I know termination protection and the source/destination check</label>
+<label class="chk"><input type="checkbox"> I can read a <code>run-instances</code> command option by option</label>
+<label class="chk"><input type="checkbox"> I verified my "What I learned" notes with my instructor</label>
+</div>
+
+<h2>What I learned</h2>
+<div class="learned" id="learned-3">
+<h3>User data vs metadata</h3>
+<p><strong>User data</strong> is what I tell the instance to do: a script that installs and configures software. It runs <strong>only at first boot</strong>, as root. To test a fixed script I must launch a <em>new</em> instance. <strong>Metadata</strong> is what the instance can learn about itself (IP address, hostname, subnet ID), read from <code>http://169.254.169.254/latest/meta-data/</code> from inside the instance.</p>
+<p>User data is stored <strong>base64-encoded</strong>, so to read it from outside I decode it:</p>
+<pre><code>aws ec2 describe-instance-attribute --instance-id i-xxxx --attribute userData \
+  --output text --query "UserData.Value" | base64 --decode</code></pre>
+<p>Never put secrets in user data. Newer instances usually require IMDSv2 (token) for metadata.</p>
+<h3>Key pairs and access</h3>
+<p>A key pair has a <strong>public key</strong> (on the instance, placed by AWS) and a <strong>private key</strong> (kept by me). It proves <em>who I am</em> when I log in; it does not encrypt data at rest. Linux: SSH with the private key. Windows: decrypt the Administrator password with the private key, then RDP.</p>
+<p><strong>Fleet access.</strong> Baking users into an AMI is inflexible. When someone leaves, their public key must be removed from every instance. Better: Directory Service (Windows), Kerberos, or configuration management (Chef, Puppet, Ansible). Best here: <strong>Session Manager</strong> (Module 2), where IAM permissions control access and there are no keys. IAM roles control AWS API access, not the OS inside the instance by themselves.</p>
+<h3>Protections</h3>
+<ul>
+<li><strong>Console screenshot:</strong> shows the instance screen when I cannot connect. I also check the security group (port 22), key and username, public IP, and status checks.</li>
+<li><strong>Termination protection:</strong> stops accidental termination until it is turned off (<code>--disable-api-termination</code>).</li>
+<li><strong>Source/destination check:</strong> on by default; the instance must be the source or destination of the traffic it handles. Disable it on a <strong>NAT instance</strong>, which forwards other machines' traffic (<code>--no-source-dest-check</code>).</li>
+</ul>
+<h3>Launching and the case study</h3>
+<p><code>aws ec2 run-instances</code> takes the AMI, instance type, key pair, security group, subnet (optional), user data and tags. Mom &amp; Pop Café uses a <strong>LAMP stack</strong> (Linux, Apache, MariaDB, PHP) on one EC2 instance, installed by a user data script so deployment is repeatable. When the script fails, read <code>/var/log/cloud-init-output.log</code>, check the OS commands (<code>yum</code> vs <code>dnf</code>), use <code>-y</code>, and confirm internet access. The solution should be frugal, resilient and secure.</p>
+<p><strong>Corrections I made.</strong> User data and metadata describe the instance, not a person. User data does not rerun on reboot. A key pair authenticates me; it does not encrypt data in transit or at rest. A departed colleague is handled by removing their key or using central access control, not by recreating instances. The source/destination check is about the traffic an instance handles, not "where remote actions come from".</p>
+</div>
+</article>
+
 <!-- ===== NEXT MODULE: copy the <article> above, change ids and content ===== -->
 </main>
 </div>
@@ -610,6 +862,29 @@ document.getElementById('g2Re').onclick=()=>{stop();go(n)};
 P.onclick=play;go(1);
 try{const bx=[...document.querySelectorAll('#checklist2 input')];const sv=JSON.parse(localStorage.getItem('m2-checks')||'[]');
 bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m2-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
+})();
+
+(function(){
+const S=[
+["Launch with run-instances","You choose the AMI, instance type, key pair, security group, subnet, user data and tags. EC2 creates the instance from the AMI."],
+["User data: bootstrap at first boot","The user data script runs once, at first boot, as root. Here it installs and starts the LAMP stack: Linux, Apache, MariaDB, PHP. Every new instance builds itself the same way."],
+["Metadata: the instance asks about itself","From inside the instance, a request to 169.254.169.254 returns facts such as public-hostname, subnet ID and the user data. It is not reachable from the Internet."],
+["Key pair: how you log in","AWS places the public key on the instance. You hold the private key. Linux: SSH. Windows: decrypt the Administrator password, then RDP."],
+["Protections","Termination protection blocks an accidental terminate until you turn it off. The source/destination check is on by default and is disabled only on a NAT instance. A console screenshot shows the instance state when you cannot connect."]];
+const svg=document.getElementById('fig3');if(!svg)return;
+const T=document.getElementById('g3T'),D=document.getElementById('g3D'),C=document.getElementById('g3Cnt'),P=document.getElementById('g3Play');
+let n=1,timer=null;
+function go(k){n=Math.max(1,Math.min(S.length,k));svg.setAttribute('class','');void svg.getBoundingClientRect();
+const c=['on'+n];for(let i=1;i<=n;i++)c.push('ge'+i);svg.setAttribute('class',c.join(' '));
+T.textContent=n+'. '+S[n-1][0];D.textContent=S[n-1][1];C.textContent='Step '+n+' of '+S.length;}
+function stop(){clearInterval(timer);timer=null;P.textContent='Play'}
+function play(){if(timer){stop();return}if(n===S.length)go(1);P.textContent='Pause';timer=setInterval(()=>{if(n>=S.length){stop();return}go(n+1)},6000)}
+document.getElementById('g3Next').onclick=()=>{stop();go(n+1)};
+document.getElementById('g3Prev').onclick=()=>{stop();go(n-1)};
+document.getElementById('g3Re').onclick=()=>{stop();go(n)};
+P.onclick=play;go(1);
+try{const bx=[...document.querySelectorAll('#checklist3 input')];const sv=JSON.parse(localStorage.getItem('m3-checks')||'[]');
+bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m3-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
 })();
 </script>
 </body>
