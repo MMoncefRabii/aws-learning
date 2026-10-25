@@ -136,6 +136,33 @@ pre code{background:none;padding:0}
 @keyframes bd{0%{transform:translate(190px,220px)}50%{transform:translate(322px,220px)}58%{transform:translate(330px,220px)}66%{transform:translate(316px,220px)}100%{transform:translate(190px,220px)}}
 @keyframes m1{from{transform:translate(600px,205px)}to{transform:translate(700px,205px)}}
 @keyframes m2{from{transform:translate(700px,238px)}to{transform:translate(600px,238px)}}
+
+#fig4{display:block;min-width:720px;width:100%;height:auto}
+#fig4 text{font:13px system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--ink)}
+#fig4 .m{fill:var(--muted);font-size:11.5px}
+#fig4 .b{font-weight:700}
+#fig4 .acc{fill:var(--accent)}
+#fig4 .acct{fill:none;stroke:var(--line);stroke-width:2}
+#fig4 .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:all .5s}
+#fig4 .lb{fill:var(--soft);stroke:var(--accent);stroke-width:2}
+#fig4 .tg{fill:none;stroke:var(--line);stroke-width:2}
+#fig4 .res{fill:var(--bg);stroke:var(--muted);stroke-width:1.5}
+#fig4 .asg{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4;opacity:0;transition:opacity .6s}
+#fig4 .line{stroke:var(--muted);stroke-width:2;stroke-dasharray:6 4;fill:none;animation:dash 1s linear infinite}
+#fig4 .okc{fill:var(--ok)}#fig4 .accc{fill:var(--accent)}#fig4 .badc{fill:var(--bad)}
+#fig4 text.okt{fill:var(--ok);font-weight:700}
+#fig4 text.badt{fill:var(--bad);font-weight:700}
+#fig4 .n5{opacity:0;transition:opacity .6s}
+#fig4.ge5 .n5{opacity:1}
+#fig4.ge4 .asg{opacity:1}
+#fig4 .o1,#fig4 .o2,#fig4 .o3,#fig4 .o4,#fig4 .o5,#fig4 .o6{display:none}
+#fig4.on1 .o1,#fig4.on2 .o2,#fig4.on3 .o3,#fig4.on4 .o4,#fig4.on5 .o5,#fig4.on6 .o6{display:inline}
+#fig4.on1 .r53,#fig4.on6 .r53{stroke:var(--accent);stroke-width:4}
+#fig4.on2 .rule{fill:var(--soft);stroke:var(--accent);stroke-width:3}
+#fig4.on3 .bad1{fill:var(--bad);stroke:var(--bad)}
+@keyframes d1{0%{transform:translate(90px,230px)}40%,60%{transform:translate(255px,230px)}100%{transform:translate(360px,230px)}}
+@keyframes r1{from{transform:translate(520px,211px)}to{transform:translate(637px,125px)}}
+@keyframes r2{from{transform:translate(520px,251px)}to{transform:translate(637px,325px)}}
 </style>
 </head>
 <body>
@@ -146,8 +173,8 @@ pre code{background:none;padding:0}
 <li class="done"><a href="#module-0">0. Welcome and overview</a></li>
 <li class="done"><a href="#module-1">1. Understanding systems operations</a></li>
 <li class="done"><a href="#module-2">2. Tooling and automation</a></li>
-<li class="now"><a href="#module-3">3. Computing servers</a></li>
-<li>4. Computing, scaling, name resolution</li>
+<li class="done"><a href="#module-3">3. Computing servers</a></li>
+<li class="now"><a href="#module-4">4. Computing, scaling, name resolution</a></li>
 <li>5. Containers and serverless</li>
 <li>6. Database services</li>
 <li>7. Networking</li>
@@ -796,6 +823,223 @@ aws ec2 create-key-pair --key-name my-key</code></pre>
 </div>
 </article>
 
+
+<!-- ===================== MODULE 4 ===================== -->
+<article id="module-4" style="margin-top:4rem;padding-top:2rem;border-top:2px solid var(--line)">
+<span class="tag">Module 4</span>
+<h2 style="margin-top:.4rem">Computing: Scaling and Name Resolution</h2>
+
+<div class="box"><strong>Objectives</strong> (inferred from the summary of the slides). By the end of this module I can:
+<ul>
+<li>Describe Elastic Load Balancing features and the three load balancer types.</li>
+<li>Explain listeners, rules, target groups and health checks.</li>
+<li>Describe Amazon EC2 Auto Scaling: launch configuration or template, Auto Scaling group, scaling policies.</li>
+<li>Describe Amazon Route 53: DNS records, routing policies, failover, latency routing, blue/green deployment.</li>
+</ul></div>
+
+<h2>1. The big idea</h2>
+<p>One server is a single point of failure and has a fixed size. This module combines three services so a website stays <strong>available</strong> and <strong>sizes itself to demand</strong>:</p>
+<table>
+<tr><th>Service</th><th>Job</th><th>Everyday picture</th></tr>
+<tr><td>Route 53</td><td>Turns a name (<code>mompopcafe.com</code>) into the right address</td><td>The phone book</td></tr>
+<tr><td>Elastic Load Balancing</td><td>Spreads requests across healthy servers</td><td>The host who sends each customer to a free table</td></tr>
+<tr><td>EC2 Auto Scaling</td><td>Adds or removes servers automatically</td><td>The manager who calls in more waiters at lunch rush</td></tr>
+</table>
+
+<h3>The big picture, animated</h3>
+<div class="fig">
+<div class="figscroll">
+<svg id="fig4" class="on1 ge1" viewBox="0 0 900 440" role="img" aria-label="Animated diagram: Route 53 sends users to an Application Load Balancer, which routes to target groups of instances managed by Auto Scaling">
+<rect class="acct" x="10" y="10" width="880" height="420" rx="14"/>
+<rect class="box" x="30" y="200" width="120" height="60" rx="8"/><text class="b" x="90" y="235" text-anchor="middle">User</text>
+<rect class="box r53" x="190" y="200" width="130" height="60" rx="8"/><text class="b" x="255" y="228" text-anchor="middle">Route 53</text><text class="m" x="255" y="246" text-anchor="middle">DNS</text>
+<line class="line" x1="150" y1="230" x2="190" y2="230"/><line class="line" x1="320" y1="230" x2="360" y2="230"/>
+<rect class="lb" x="360" y="110" width="160" height="220" rx="10"/><text class="b acc" x="440" y="136" text-anchor="middle">Application LB</text>
+<rect class="box" x="375" y="150" width="130" height="30" rx="6"/><text x="440" y="170" text-anchor="middle">Listener :80</text>
+<rect class="box rule" x="375" y="196" width="130" height="30" rx="6"/><text x="440" y="216" text-anchor="middle">/orders* → TG1</text>
+<rect class="box rule" x="375" y="236" width="130" height="30" rx="6"/><text x="440" y="256" text-anchor="middle">/images* → TG2</text>
+<rect class="box" x="375" y="276" width="130" height="30" rx="6"/><text class="m" x="440" y="296" text-anchor="middle">default rule</text>
+<rect class="tg" x="580" y="50" width="290" height="150" rx="10"/><text class="b" x="594" y="72">Target group 1: orders</text>
+<rect class="tg" x="580" y="260" width="290" height="150" rx="10"/><text class="b" x="594" y="282">Target group 2: images</text>
+<rect class="asg" x="590" y="82" width="270" height="86" rx="8"/><text class="m n4x" x="600" y="184" style="opacity:1">Auto Scaling group</text>
+<rect class="res bad1" x="600" y="100" width="75" height="52" rx="6"/><text x="637" y="130" text-anchor="middle">web-1</text>
+<rect class="res bad2" x="690" y="100" width="75" height="52" rx="6"/><text x="727" y="130" text-anchor="middle">web-2</text>
+<g class="n5"><rect class="res" x="780" y="100" width="75" height="52" rx="6"/><text x="817" y="130" text-anchor="middle">web-3</text></g>
+<rect class="res" x="600" y="300" width="75" height="52" rx="6"/><text x="637" y="330" text-anchor="middle">img-1</text>
+<rect class="res" x="690" y="300" width="75" height="52" rx="6"/><text x="727" y="330" text-anchor="middle">img-2</text>
+
+<g class="o1"><g class="pk" style="animation:d1 3.2s ease-in-out forwards"><circle class="accc" r="8"/></g>
+<text class="m" x="255" y="284" text-anchor="middle" style="animation:fin .5s 1.2s both">mompopcafe.com → ALB address</text></g>
+<g class="o2"><g class="pk" style="animation:r1 1.8s ease-in-out forwards"><circle class="accc" r="8"/></g><g class="pk" style="animation:r2 1.8s ease-in-out forwards"><circle class="okc" r="8"/></g>
+<text class="b acc" x="440" y="356" text-anchor="middle">content-based routing</text></g>
+<g class="o3"><rect class="res" x="690" y="100" width="75" height="52" rx="6" style="fill:var(--bad);stroke:var(--bad)"/><text x="727" y="130" text-anchor="middle" style="fill:#fff">web-2</text>
+<text class="badt" x="727" y="170" text-anchor="middle">unhealthy</text><text class="m" x="440" y="356" text-anchor="middle">health check fails: the ALB stops sending traffic to web-2</text></g>
+<g class="o4"><rect class="res" x="690" y="100" width="75" height="52" rx="6" style="fill:var(--ok);stroke:var(--ok);animation:fin 1s .6s both"/><text x="727" y="130" text-anchor="middle" style="fill:#fff;animation:fin 1s .6s both">new web-2</text>
+<text class="m" x="440" y="356" text-anchor="middle">Auto Scaling replaces it from the launch template</text></g>
+<g class="o5"><text class="badt" x="727" y="40" text-anchor="middle">CPU 85% (target 50%)</text><text class="okt" x="440" y="356" text-anchor="middle">scale out: desired capacity 2 → 3</text></g>
+<g class="o6"><text class="m" x="255" y="284" text-anchor="middle">simple · weighted · latency</text><text class="m" x="255" y="300" text-anchor="middle">failover · geolocation</text><text class="m" x="255" y="316" text-anchor="middle">geoproximity · multivalue</text>
+<rect class="accc" x="190" y="340" width="117" height="14"/><rect class="okc" x="307" y="340" width="13" height="14"/>
+<text class="m" x="190" y="374">blue 90%</text><text class="okt" x="262" y="374">green 10%</text></g>
+</svg>
+</div>
+<div class="figctl">
+<button type="button" id="g4Prev">Previous</button><button type="button" id="g4Play">Play</button><button type="button" id="g4Next">Next</button><button type="button" id="g4Re">Replay step</button><span class="cnt" id="g4Cnt"></span>
+</div>
+<div class="cap" aria-live="polite"><strong id="g4T"></strong><p id="g4D" style="margin:.3rem 0 0"></p></div>
+</div>
+
+<h2>2. Elastic Load Balancing (ELB)</h2>
+<p>A load balancer is the <strong>single point of contact</strong> for clients and distributes traffic across multiple targets (EC2 instances, containers, IP addresses), in one or several Availability Zones. You configure it in the EC2 section of the Console, with the AWS CLI, or with the SDKs.</p>
+<table>
+<tr><th>Type</th><th>Layer</th><th>Best for</th></tr>
+<tr><td><strong>Application Load Balancer (ALB)</strong></td><td>7 (application)</td><td>HTTP/HTTPS, content-based routing, containers, microservices, WebSocket and HTTP/2. Recommended for most VPC use cases.</td></tr>
+<tr><td><strong>Network Load Balancer (NLB)</strong></td><td>4 (transport)</td><td>TCP/UDP, tens of millions of requests per second, ultra-low latency, sudden traffic spikes, <strong>one static IP per Availability Zone</strong>.</td></tr>
+<tr><td><strong>Classic Load Balancer (CLB)</strong></td><td>4 and 7</td><td>Basic balancing, for applications built in the old EC2-Classic network. Legacy.</td></tr>
+</table>
+<p class="empty">Added by me: AWS also offers a Gateway Load Balancer, for virtual network appliances such as firewalls. It is not in the slides you pasted.</p>
+<h3>Key features</h3>
+<ul>
+<li><strong>High availability:</strong> traffic goes to targets in one or several AZs.</li>
+<li><strong>Health checks:</strong> unhealthy targets stop receiving traffic; the load spreads over the healthy ones.</li>
+<li><strong>Security:</strong> security groups on the load balancer, and optional <strong>internal</strong> (non-internet-facing) load balancers.</li>
+<li><strong>TLS termination:</strong> the load balancer decrypts HTTPS, with integrated certificate management, so your servers save CPU.</li>
+<li><strong>Layer 4 or layer 7:</strong> pure TCP, or HTTP/HTTPS features.</li>
+<li><strong>Monitoring:</strong> CloudWatch metrics and request tracing.</li>
+</ul>
+<h3>The four ALB building blocks</h3>
+<table>
+<tr><th>Piece</th><th>Meaning</th></tr>
+<tr><td>Listener</td><td>A process that checks for connection requests, using the protocol and port you set (for example HTTP on 80). A load balancer can have several.</td></tr>
+<tr><td>Rule</td><td>Belongs to a listener. Each rule has a <strong>condition</strong>, a <strong>priority</strong> and an <strong>action</strong> (forward to a target group). Every listener must have a <strong>default rule</strong>.</td></tr>
+<tr><td>Target group</td><td>A set of targets (EC2 instances, ECS container instances) that receive requests on a protocol and port. A target can be in more than one target group.</td></tr>
+<tr><td>Health check</td><td>Configured <strong>per target group</strong> and run on all its registered targets.</td></tr>
+</table>
+<p><strong>Content-based routing</strong> example: <code>www.example.com/orders</code> goes to one group of instances, <code>/images</code> to another, and the registration area to a third.</p>
+
+<h2>3. Amazon EC2 Auto Scaling</h2>
+<p>It keeps your application available by adding or removing instances automatically. It has <strong>three parts</strong>:</p>
+<ol class="plain">
+<li><strong>Launch configuration or launch template:</strong> what to launch: IAM role, security groups, storage, instance type, user data, key pair (and the AMI).</li>
+<li><strong>Auto Scaling group (ASG):</strong> where and how many: <strong>minimum, maximum and desired</strong> size, across subnets or AZs.</li>
+<li><strong>Scaling policies:</strong> when to add or remove.</li>
+</ol>
+<p class="empty">Note: the slides say "launch configuration". AWS now recommends <strong>launch templates</strong>, which are newer and replace launch configurations. The concept is the same.</p>
+<h3>Ways to scale</h3>
+<table>
+<tr><th>Method</th><th>How it works</th></tr>
+<tr><td>Health-based (steady-state group)</td><td>Min = max = desired = 1, so one instance is always running. If it is marked unhealthy (a failed check, or <code>aws autoscaling set-instance-health</code>), the group terminates it and launches a new one. For a NAT instance this is still a single point of failure, with downtime during replacement.</td></tr>
+<tr><td>Scheduled</td><td>For predictable load (traffic rises Wednesday, falls Friday). A <strong>scheduled action</strong> sets new min, max and desired values at a given time.</td></tr>
+<tr><td>Dynamic, <strong>target tracking</strong></td><td>You pick a metric and a target (like a thermostat) and Auto Scaling does the rest.</td></tr>
+<tr><td>Dynamic, <strong>step scaling</strong></td><td>Adjustments vary with how far the alarm is breached. No cooldown periods for step policies.</td></tr>
+<tr><td>Dynamic, <strong>simple scaling</strong></td><td>One scaling adjustment per alarm.</td></tr>
+<tr><td><strong>Predictive</strong></td><td>Machine learning forecasts traffic from daily and weekly patterns (needs at least 1 day of history, re-evaluated every 24 hours, forecasts the next 48 hours) and schedules capacity ahead of time. Good for <em>cyclic</em> traffic, not for random spikes. It can be combined with dynamic scaling.</td></tr>
+</table>
+<p><strong>Rule of thumb.</strong> If the metric rises and falls proportionally with the number of instances (such as average CPU), use <strong>target tracking</strong>. Otherwise use <strong>step scaling</strong>. Scaling can be driven by instance health, CloudWatch alarms, a time schedule, or past usage.</p>
+
+<h2>4. Amazon Route 53</h2>
+<p>Route 53 is AWS's <strong>DNS</strong> service. It registers or transfers domain names, resolves names to IP addresses, and can route traffic to resources in different Regions or on-premises. An ELB gets a default DNS name, or you can use your own domain through Route 53.</p>
+<table>
+<tr><th>Record</th><th>What it does</th></tr>
+<tr><td><strong>CNAME</strong></td><td>Redirects a name to <em>any</em> other DNS name (for example <code>apex.example.com</code> to <code>acme.example.org</code>).</td></tr>
+<tr><td><strong>Alias</strong></td><td>Redirects only to selected AWS resources (S3 website bucket, CloudFront distribution, load balancer, or another record in the same hosted zone).</td></tr>
+</table>
+<p class="empty">Added by me: an alias record can be used at the zone apex (<code>example.com</code> itself), where a CNAME cannot, and Route 53 does not charge for alias queries to AWS resources.</p>
+<h3>The 7 routing policies</h3>
+<table>
+<tr><th>Policy</th><th>Use it when...</th></tr>
+<tr><td>Simple</td><td>One resource does the job (one web server for example.com)</td></tr>
+<tr><td>Weighted</td><td>You want to split traffic in proportions (90% / 10%)</td></tr>
+<tr><td>Latency</td><td>You have resources in several Regions and want the lowest latency</td></tr>
+<tr><td>Failover</td><td>You want active-passive failover</td></tr>
+<tr><td>Geolocation</td><td>Routing by where the users are</td></tr>
+<tr><td>Geoproximity</td><td>Routing by where the resources are, with optional shifting of traffic</td></tr>
+<tr><td>Multivalue answer</td><td>Route 53 answers DNS queries with up to eight healthy records, chosen at random</td></tr>
+</table>
+<p><strong>Latency-based routing (LBR).</strong> With load balancers in Oregon and Sydney, Route 53 uses its latency data to send a user in Barcelona to the Region that answers fastest. Usually that is the closest one, but not always.</p>
+<p><strong>Blue/green deployment.</strong> Run two matching environments, each with its own load balancer and Auto Scaling group: blue (current) and green (new). Use <strong>weighted routing</strong> to shift users gradually from blue to green, monitor green with CloudWatch and CloudWatch Logs, and shift back to blue if there are problems. Once green is stable, retire blue. Because of DNS caching, shutting down blue fully can take from a day to a week.</p>
+<p><strong>Load testing.</strong> Simulate traffic with open source tools before going to production, to confirm the scaling design works.</p>
+
+<h2>5. CLI cheat sheet</h2>
+<pre><code># --- Load balancer (elbv2) ---
+aws elbv2 create-load-balancer --name cafe-alb --subnets subnet-a subnet-b --security-groups sg-0abc123
+aws elbv2 create-target-group --name cafe-tg --protocol HTTP --port 80 --vpc-id vpc-0abc123 --health-check-path /
+aws elbv2 register-targets --target-group-arn TG_ARN --targets Id=i-0abc123
+aws elbv2 create-listener --load-balancer-arn ALB_ARN --protocol HTTP --port 80 \
+  --default-actions Type=forward,TargetGroupArn=TG_ARN
+aws elbv2 create-rule --listener-arn LISTENER_ARN --priority 10 \
+  --conditions Field=path-pattern,Values='/orders*' --actions Type=forward,TargetGroupArn=TG_ARN
+aws elbv2 describe-target-health --target-group-arn TG_ARN
+
+# --- Auto Scaling ---
+aws ec2 create-launch-template --launch-template-name cafe-lt \
+  --launch-template-data '{"ImageId":"ami-0abc123","InstanceType":"t3.micro","KeyName":"my-key","SecurityGroupIds":["sg-0abc123"]}'
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name cafe-asg \
+  --launch-template LaunchTemplateName=cafe-lt,Version='$Latest' \
+  --min-size 2 --max-size 6 --desired-capacity 2 \
+  --vpc-zone-identifier "subnet-a,subnet-b" --target-group-arns TG_ARN --health-check-type ELB
+aws autoscaling put-scaling-policy --auto-scaling-group-name cafe-asg --policy-name cpu50 \
+  --policy-type TargetTrackingScaling --target-tracking-configuration file://cpu50.json
+aws autoscaling put-scheduled-update-group-action --auto-scaling-group-name cafe-asg \
+  --scheduled-action-name midweek-up --recurrence "0 8 * * 3" --min-size 4 --max-size 10 --desired-capacity 6
+aws autoscaling set-instance-health --instance-id i-0abc123 --health-status Unhealthy
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names cafe-asg
+
+# cpu50.json
+# {"PredefinedMetricSpecification":{"PredefinedMetricType":"ASGAverageCPUUtilization"},"TargetValue":50.0}
+
+# --- Route 53 ---
+aws route53 list-hosted-zones
+aws route53 change-resource-record-sets --hosted-zone-id ZONE_ID --change-batch file://change.json</code></pre>
+<p>A weighted record for a blue/green shift goes in <code>change.json</code> (one record per environment, with <code>SetIdentifier</code> and <code>Weight</code>):</p>
+<pre><code>{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{
+  "Name":"www.example.com","Type":"CNAME","SetIdentifier":"blue",
+  "Weight":90,"TTL":60,"ResourceRecords":[{"Value":"blue-alb.eu-west-1.elb.amazonaws.com"}]}}]}</code></pre>
+
+<h2>6. Self-check</h2>
+<details><summary>When would you choose an ALB over an NLB?</summary><p>ALB for HTTP/HTTPS with content-based routing, containers and microservices (layer 7). NLB for TCP/UDP with extreme performance, low latency and a static IP per AZ (layer 4).</p></details>
+<details><summary>Explain listener, rule, target group and health check.</summary><p>A listener waits for connections on a protocol and port. Its rules (condition, priority, action) decide which target group gets the request. A target group holds the targets. Health checks run per target group.</p></details>
+<details><summary>What are the three parts of EC2 Auto Scaling?</summary><p>Launch configuration or template, Auto Scaling group (min, max, desired), and scaling policies.</p></details>
+<details><summary>When do you use target tracking, and when step scaling?</summary><p>Target tracking when the metric changes proportionally with the number of instances (like average CPU). Otherwise step scaling.</p></details>
+<details><summary>What is a steady-state group and what is its weakness?</summary><p>Min = max = desired = 1, so a failed instance is replaced automatically. For something like a NAT instance it is still a single point of failure, with downtime during replacement.</p></details>
+<details><summary>What is the difference between CNAME and alias?</summary><p>A CNAME can point to any DNS name. An alias points only to selected AWS resources.</p></details>
+<details><summary>How does a blue/green deployment use Route 53?</summary><p>Weighted routing shifts users gradually from blue to green, and can shift them back if green has problems.</p></details>
+<details><summary>Name the 7 Route 53 routing policies.</summary><p>Simple, weighted, latency, failover, geolocation, geoproximity, multivalue answer.</p></details>
+
+<h2>7. Module checklist</h2>
+<div class="box" id="checklist4">
+<label class="chk"><input type="checkbox"> I can explain ALB vs NLB vs CLB</label>
+<label class="chk"><input type="checkbox"> I can explain listener, rule, target group and health check</label>
+<label class="chk"><input type="checkbox"> I know the 3 Auto Scaling parts and the scaling methods</label>
+<label class="chk"><input type="checkbox"> I know the 7 Route 53 routing policies and blue/green</label>
+<label class="chk"><input type="checkbox"> I verified my "What I learned" notes with my instructor</label>
+</div>
+
+<h2>What I learned</h2>
+<div class="learned" id="learned-4">
+<p><strong>Big idea.</strong> Three services keep a site available and sized to demand: <strong>Route 53</strong> (name to address), <strong>Elastic Load Balancing</strong> (spread traffic over healthy servers) and <strong>EC2 Auto Scaling</strong> (add or remove servers automatically).</p>
+<h3>Elastic Load Balancing</h3>
+<ul>
+<li><strong>ALB:</strong> layer 7, HTTP/HTTPS, <strong>content-based routing</strong> (path, hostname), containers, microservices.</li>
+<li><strong>NLB:</strong> layer 4, TCP/UDP, very high performance and low latency, one static IP per Availability Zone.</li>
+<li><strong>CLB:</strong> legacy, for the old EC2-Classic network.</li>
+</ul>
+<p><strong>Listener</strong> checks for connections on a protocol and port. A <strong>rule</strong> (condition, priority, action) decides which <strong>target group</strong> gets the request; every listener has a default rule. The target group holds the targets, and <strong>health checks</strong> run per target group so unhealthy targets stop receiving traffic. Other features: high availability across AZs, security groups, internal load balancers, TLS termination, CloudWatch monitoring.</p>
+<h3>EC2 Auto Scaling</h3>
+<p>Three parts: <strong>launch template</strong> (what to launch: AMI, instance type, security groups, key pair, user data, IAM role), <strong>Auto Scaling group</strong> (minimum, maximum, desired size), and <strong>scaling policies</strong> (when to add or remove).</p>
+<ul>
+<li><strong>Steady-state group:</strong> min = max = desired = 1; a failed instance is replaced, but a NAT instance stays a single point of failure with downtime during replacement (a NAT gateway per AZ is more resilient).</li>
+<li><strong>Scheduled:</strong> for predictable changes (rises Wednesday, falls Friday).</li>
+<li><strong>Dynamic:</strong> <em>target tracking</em> (keep a metric at a target, like a thermostat; use when the metric changes proportionally with instance count, e.g. average CPU), <em>step scaling</em> (adjustment depends on how far the alarm is breached; no cooldown), <em>simple scaling</em> (one adjustment per alarm).</li>
+<li><strong>Predictive:</strong> machine learning forecasts cyclic traffic from past usage (needs at least 1 day of history, re-evaluated every 24 hours, forecasts the next 48 hours) and adds capacity <em>before</em> the spike. It <em>prepares</em> for expected demand, while target tracking <em>reacts</em> to current demand. They work well together; predictive does not help with random spikes.</li>
+</ul>
+<h3>Route 53</h3>
+<p>DNS service: registers domains, resolves names to IPs, routes to resources in different Regions or on-premises. <strong>CNAME</strong> maps a name to any other DNS name and cannot be used at the zone apex. <strong>Alias</strong> points to supported AWS resources (ALB, S3 website, CloudFront, another record in the zone), works at the apex, and has no extra query charge for AWS resources.</p>
+<p><strong>7 routing policies:</strong> simple, weighted, latency, failover, geolocation, geoproximity, multivalue answer. (Route 53 has since added an IP-based policy, but the course lists seven.) <strong>Latency-based routing</strong> sends users to the Region with the fastest response, usually the closest. <strong>Failover</strong> is active-passive.</p>
+<p><strong>Blue/green deployment:</strong> two matching environments, each with its own load balancer and Auto Scaling group. Use <strong>weighted routing</strong> to shift users from blue to green gradually, monitor green with CloudWatch, and shift back if there are problems. Retiring blue can take a day to a week because of DNS caching and TTL, and it is also kept for monitoring and rollback. Test scaling beforehand with load testing tools.</p>
+<p><strong>Corrections I made.</strong> Dynamic policies (target tracking, step, simple) react to load; the approach for repeating daily patterns without manual setup is <strong>predictive scaling</strong>, not target tracking.</p>
+</div>
+</article>
+
 <!-- ===== NEXT MODULE: copy the <article> above, change ids and content ===== -->
 </main>
 </div>
@@ -885,6 +1129,30 @@ document.getElementById('g3Re').onclick=()=>{stop();go(n)};
 P.onclick=play;go(1);
 try{const bx=[...document.querySelectorAll('#checklist3 input')];const sv=JSON.parse(localStorage.getItem('m3-checks')||'[]');
 bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m3-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
+})();
+
+(function(){
+const S=[
+["Route 53 resolves the name","The user types mompopcafe.com. Route 53 (DNS) answers with the address of the load balancer. A record can be an alias to the load balancer or a CNAME."],
+["The ALB routes by content","The listener receives the request and its rules look at the content: /orders goes to target group 1, /images to target group 2. Anything else follows the default rule. This is content-based routing."],
+["Health checks protect users","The load balancer checks each target in a target group. When web-2 fails, the ALB stops sending traffic to it and the healthy instances take the load."],
+["Auto Scaling heals the group","If the Auto Scaling group sees an unhealthy instance, it terminates it and launches a new one from the launch template, keeping the group at its desired size."],
+["Scale out under load","CPU rises above the target (for example 50%), so the scaling policy raises the desired capacity and a new instance joins the group and the target group."],
+["Route 53 policies and blue/green","Route 53 has seven routing policies. Weighted routing can send 90% of users to the blue environment and 10% to the new green one, then shift gradually or roll back."]];
+const svg=document.getElementById('fig4');if(!svg)return;
+const T=document.getElementById('g4T'),D=document.getElementById('g4D'),C=document.getElementById('g4Cnt'),P=document.getElementById('g4Play');
+let n=1,timer=null;
+function go(k){n=Math.max(1,Math.min(S.length,k));svg.setAttribute('class','');void svg.getBoundingClientRect();
+const c=['on'+n];for(let i=1;i<=n;i++)c.push('ge'+i);svg.setAttribute('class',c.join(' '));
+T.textContent=n+'. '+S[n-1][0];D.textContent=S[n-1][1];C.textContent='Step '+n+' of '+S.length;}
+function stop(){clearInterval(timer);timer=null;P.textContent='Play'}
+function play(){if(timer){stop();return}if(n===S.length)go(1);P.textContent='Pause';timer=setInterval(()=>{if(n>=S.length){stop();return}go(n+1)},6000)}
+document.getElementById('g4Next').onclick=()=>{stop();go(n+1)};
+document.getElementById('g4Prev').onclick=()=>{stop();go(n-1)};
+document.getElementById('g4Re').onclick=()=>{stop();go(n)};
+P.onclick=play;go(1);
+try{const bx=[...document.querySelectorAll('#checklist4 input')];const sv=JSON.parse(localStorage.getItem('m4-checks')||'[]');
+bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m4-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
 })();
 </script>
 </body>
