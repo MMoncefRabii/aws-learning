@@ -163,6 +163,29 @@ pre code{background:none;padding:0}
 @keyframes d1{0%{transform:translate(90px,230px)}40%,60%{transform:translate(255px,230px)}100%{transform:translate(360px,230px)}}
 @keyframes r1{from{transform:translate(520px,211px)}to{transform:translate(637px,125px)}}
 @keyframes r2{from{transform:translate(520px,251px)}to{transform:translate(637px,325px)}}
+
+#fig5{display:block;min-width:720px;width:100%;height:auto}
+#fig5 text{font:13px system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--ink)}
+#fig5 .m{fill:var(--muted);font-size:11.5px}
+#fig5 .b{font-weight:700}
+#fig5 .acc{fill:var(--accent)}
+#fig5 .acct{fill:none;stroke:var(--line);stroke-width:2}
+#fig5 .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:all .5s}
+#fig5 .zone{fill:none;stroke:var(--line);stroke-width:2;stroke-dasharray:6 4}
+#fig5 .line{stroke:var(--muted);stroke-width:2;stroke-dasharray:6 4;fill:none;animation:dash 1s linear infinite}
+#fig5 .okc{fill:var(--ok)}#fig5 .accc{fill:var(--accent)}#fig5 .goldc{fill:var(--gold)}
+#fig5 text.okt{fill:var(--ok);font-weight:700}
+#fig5 .top{transition:opacity .5s}
+#fig5.on5 .top,#fig5.on6 .top{opacity:.25}
+#fig5 .o1,#fig5 .o2,#fig5 .o3,#fig5 .o4,#fig5 .o5,#fig5 .o6{display:none}
+#fig5.on1 .o1,#fig5.on2 .o2,#fig5.on3 .o3,#fig5.on4 .o4,#fig5.on5 .o5,#fig5.on6 .o6{display:inline}
+#fig5.on1 .nS3,#fig5.on2 .nCog,#fig5.on3 .nApi,#fig5.on4 .nLam,#fig5.on4 .nDdb,#fig5.on5 .nECR,#fig5.on6 .nSF{stroke:var(--accent);stroke-width:4;fill:var(--soft)}
+@keyframes k1{from{transform:translate(85px,265px)}to{transform:translate(231px,120px)}}
+@keyframes k2{from{transform:translate(85px,265px)}to{transform:translate(377px,120px)}}
+@keyframes k3{from{transform:translate(85px,265px)}to{transform:translate(523px,120px)}}
+@keyframes k4{0%{transform:translate(523px,95px)}50%{transform:translate(669px,95px)}100%{transform:translate(815px,95px)}}
+@keyframes e1{0%{transform:translate(290px,305px)}45%,55%{transform:translate(495px,305px)}100%{transform:translate(682px,315px)}}
+@keyframes s1{0%{transform:translate(245px,315px)}25%{transform:translate(350px,315px)}45%{transform:translate(480px,315px)}75%{transform:translate(625px,275px)}100%{transform:translate(790px,315px)}}
 </style>
 </head>
 <body>
@@ -174,8 +197,8 @@ pre code{background:none;padding:0}
 <li class="done"><a href="#module-1">1. Understanding systems operations</a></li>
 <li class="done"><a href="#module-2">2. Tooling and automation</a></li>
 <li class="done"><a href="#module-3">3. Computing servers</a></li>
-<li class="now"><a href="#module-4">4. Computing, scaling, name resolution</a></li>
-<li>5. Containers and serverless</li>
+<li class="done"><a href="#module-4">4. Computing, scaling, name resolution</a></li>
+<li class="now"><a href="#module-5">5. Containers and serverless</a></li>
 <li>6. Database services</li>
 <li>7. Networking</li>
 <li>8. Storing and archiving</li>
@@ -1040,6 +1063,205 @@ aws route53 change-resource-record-sets --hosted-zone-id ZONE_ID --change-batch 
 </div>
 </article>
 
+
+<!-- ===================== MODULE 5 ===================== -->
+<article id="module-5" style="margin-top:4rem;padding-top:2rem;border-top:2px solid var(--line)">
+<span class="tag">Module 5</span>
+<h2 style="margin-top:.4rem">Computing: Containers and Serverless</h2>
+
+<div class="box"><strong>Objectives</strong> (inferred from the summary). By the end of this module I can:
+<ul>
+<li>Explain the purpose of AWS Lambda.</li>
+<li>Explain APIs, including RESTful APIs, and the benefits of Amazon API Gateway.</li>
+<li>Explain containers and the AWS services that support them (Amazon ECR, Docker, Kubernetes).</li>
+<li>Explain AWS Step Functions and how it coordinates serverless workflows.</li>
+</ul></div>
+<div class="box note"><strong>Heads up.</strong> The slides you pasted cover API Gateway, ECR and Step Functions, but not the Lambda and ECS/EKS slides that the module summary mentions. I added short refreshers for those and marked them. If you have those slides, send them and I'll extend the sections.</div>
+
+<h2>1. The big idea</h2>
+<p><strong>Serverless</strong> does not mean "no servers". It means <strong>you don't manage the servers</strong>: no operating system to patch, no instances to size. AWS runs the code, scales it automatically, and you pay for what is used. <strong>Containers</strong> sit in between: you package the app yourself, and AWS helps run it.</p>
+<table>
+<tr><th>Option</th><th>You manage</th><th>Good for</th></tr>
+<tr><td>EC2 instance</td><td>The OS, patching, scaling</td><td>Full control (Modules 3 and 4)</td></tr>
+<tr><td>Containers (ECS, EKS)</td><td>The container image and its settings</td><td>Portable apps made of several parts</td></tr>
+<tr><td>Lambda</td><td>Only your code</td><td>Short, event-driven tasks</td></tr>
+</table>
+
+<h3>The big picture, animated</h3>
+<div class="fig">
+<div class="figscroll">
+<svg id="fig5" class="on1" viewBox="0 0 900 460" role="img" aria-label="Animated diagram: serverless web app with S3, Cognito, API Gateway, Lambda and DynamoDB; then containers with ECR and ECS; then a Step Functions workflow">
+<rect class="acct" x="10" y="10" width="880" height="440" rx="14"/>
+<g class="top">
+<rect class="box" x="30" y="230" width="110" height="70" rx="8"/><text class="b" x="85" y="262" text-anchor="middle">Browser</text><text class="m" x="85" y="280" text-anchor="middle">web app</text>
+<line class="line" x1="85" y1="230" x2="231" y2="130"/><line class="line" x1="85" y1="230" x2="377" y2="130"/><line class="line" x1="85" y1="230" x2="523" y2="130"/>
+<line class="line" x1="578" y1="95" x2="614" y2="95"/><line class="line" x1="724" y1="95" x2="760" y2="95"/>
+<rect class="box nS3" x="176" y="60" width="110" height="70" rx="8"/><text class="b" x="231" y="92" text-anchor="middle">S3</text><text class="m" x="231" y="110" text-anchor="middle">static website</text>
+<rect class="box nCog" x="322" y="60" width="110" height="70" rx="8"/><text class="b" x="377" y="92" text-anchor="middle">Cognito</text><text class="m" x="377" y="110" text-anchor="middle">users + login</text>
+<rect class="box nApi" x="468" y="60" width="110" height="70" rx="8"/><text class="b" x="523" y="92" text-anchor="middle">API Gateway</text><text class="m" x="523" y="110" text-anchor="middle">REST API</text>
+<rect class="box nLam" x="614" y="60" width="110" height="70" rx="8"/><text class="b" x="669" y="92" text-anchor="middle">Lambda</text><text class="m" x="669" y="110" text-anchor="middle">your code</text>
+<rect class="box nDdb" x="760" y="60" width="110" height="70" rx="8"/><text class="b" x="815" y="92" text-anchor="middle">DynamoDB</text><text class="m" x="815" y="110" text-anchor="middle">data</text>
+<text class="m" x="450" y="38" text-anchor="middle">Serverless web application: no servers to manage</text>
+</g>
+<g class="o1"><g class="pk" style="animation:k1 1.8s ease-in-out forwards"><circle class="accc" r="8"/></g><text class="b acc" x="85" y="324" text-anchor="middle">loads HTML, CSS, JS</text></g>
+<g class="o2"><g class="pk" style="animation:k2 1.8s ease-in-out forwards"><circle class="goldc" r="8"/></g><text class="b acc" x="85" y="324" text-anchor="middle">sign in, get a token</text></g>
+<g class="o3"><g class="pk" style="animation:k3 1.8s ease-in-out forwards"><circle class="accc" r="8"/></g><text class="b acc" x="85" y="324" text-anchor="middle">GET /pets/1 + token</text><text class="m" x="523" y="152" text-anchor="middle">throttling · authorizer · stages</text></g>
+<g class="o4"><g class="pk" style="animation:k4 2.4s ease-in-out forwards"><circle class="accc" r="8"/></g><g class="pk" style="animation:k3 1.8s 2.6s ease-in-out reverse both"><circle class="okc" r="8"/></g><text class="okt" x="85" y="324" text-anchor="middle" style="animation:fin .5s 3s both">200 OK + JSON</text><text class="m" x="742" y="152" text-anchor="middle">Lambda reads or writes DynamoDB</text></g>
+
+<g class="o5"><rect class="zone" x="200" y="180" width="670" height="250" rx="10"/><text class="b" x="215" y="204">Containers: package once, run anywhere</text>
+<rect class="box" x="230" y="270" width="120" height="70" rx="8"/><text class="b" x="290" y="302" text-anchor="middle">Docker image</text><text class="m" x="290" y="320" text-anchor="middle">app + runtime</text>
+<rect class="box nECR" x="420" y="250" width="150" height="110" rx="8"/><text class="b" x="495" y="290" text-anchor="middle">Amazon ECR</text><text class="m" x="495" y="308" text-anchor="middle">image registry</text><text class="m" x="495" y="326" text-anchor="middle">stored in S3, IAM access</text>
+<rect class="box" x="640" y="230" width="210" height="170" rx="8"/><text class="b" x="745" y="256" text-anchor="middle">Amazon ECS / EKS</text>
+<rect class="box" x="655" y="290" width="55" height="50" rx="6"/><text x="682" y="320" text-anchor="middle">app</text><rect class="box" x="717" y="290" width="55" height="50" rx="6"/><text x="744" y="320" text-anchor="middle">app</text><rect class="box" x="779" y="290" width="55" height="50" rx="6"/><text x="806" y="320" text-anchor="middle">app</text>
+<text class="m" x="745" y="380" text-anchor="middle">runs and scales the containers</text>
+<line class="line" x1="350" y1="305" x2="420" y2="305"/><line class="line" x1="570" y1="305" x2="640" y2="305"/>
+<g class="pk" style="animation:e1 3s ease-in-out forwards"><circle class="accc" r="8"/></g></g>
+
+<g class="o6"><rect class="zone" x="200" y="180" width="670" height="250" rx="10"/><text class="b" x="215" y="204">Step Functions: a workflow as a state machine</text>
+<circle class="box" cx="245" cy="315" r="18"/><text class="m" x="245" y="355" text-anchor="middle">Start</text>
+<rect class="box nSF" x="290" y="290" width="120" height="50" rx="8"/><text x="350" y="312" text-anchor="middle">Task: Lambda</text><text class="m" x="350" y="328" text-anchor="middle">validate order</text>
+<path class="box nSF" d="M480 292 L505 315 L480 338 L455 315 Z"/><text class="m" x="480" y="360" text-anchor="middle">Choice</text>
+<rect class="box nSF" x="560" y="250" width="130" height="50" rx="8"/><text x="625" y="272" text-anchor="middle">Task: container</text><text class="m" x="625" y="288" text-anchor="middle">prepare order</text>
+<rect class="box nSF" x="560" y="330" width="130" height="50" rx="8"/><text x="625" y="352" text-anchor="middle">Task: Lambda</text><text class="m" x="625" y="368" text-anchor="middle">notify customer</text>
+<circle class="box" cx="790" cy="315" r="18"/><text class="m" x="790" y="355" text-anchor="middle">End</text>
+<line class="line" x1="263" y1="315" x2="290" y2="315"/><line class="line" x1="410" y1="315" x2="455" y2="315"/><line class="line" x1="505" y1="315" x2="560" y2="275"/><line class="line" x1="505" y1="315" x2="560" y2="355"/><line class="line" x1="690" y1="275" x2="772" y2="315"/>
+<text class="okt" x="625" y="236" text-anchor="middle">retries on error</text>
+<g class="pk" style="animation:s1 4s ease-in-out forwards"><circle class="accc" r="8"/></g></g>
+</svg>
+</div>
+<div class="figctl">
+<button type="button" id="g5Prev">Previous</button><button type="button" id="g5Play">Play</button><button type="button" id="g5Next">Next</button><button type="button" id="g5Re">Replay step</button><span class="cnt" id="g5Cnt"></span>
+</div>
+<div class="cap" aria-live="polite"><strong id="g5T"></strong><p id="g5D" style="margin:.3rem 0 0"></p></div>
+</div>
+
+<h2>2. AWS Lambda (refresher)</h2>
+<p class="empty">This section is mine, not from your pasted slides.</p>
+<p><strong>AWS Lambda</strong> runs your code in response to <strong>events</strong> (an API call, a file uploaded to S3, a schedule) without any server for you to manage. You upload the function, AWS runs it when needed and scales it, and you pay for the requests and the time it runs. A function needs an <strong>IAM execution role</strong> that says what it may access, which is the IAM idea from Module 1 again.</p>
+<pre><code>aws lambda create-function --function-name cafe-hello --runtime python3.12 \
+  --role arn:aws:iam::123456789012:role/lambda-role \
+  --handler lambda_function.lambda_handler --zip-file fileb://function.zip
+aws lambda invoke --function-name cafe-hello --payload '{"name":"maria"}' \
+  --cli-binary-format raw-in-base64-out out.json
+aws lambda list-functions</code></pre>
+
+<h2>3. APIs and RESTful APIs</h2>
+<p>An <strong>API</strong> (application programming interface) is a set of rules that lets one program ask another to do something, like a waiter who carries your order to the kitchen. A <strong>RESTful</strong> API is built around <strong>resources</strong> (like <code>/pets/1</code>) and standard HTTP methods: <code>GET</code> reads, <code>POST</code> creates. The slides' examples:</p>
+<pre><code>GET /pets/1                       →  200 OK  {"id":"1","type":"dog","price":"$249.99"}
+POST /store/pets  {"type":"dog","price":1001.00}  →  HTTP 200 OK</code></pre>
+<p>An API has a <strong>frontend</strong> (what clients call) and a <strong>backend</strong> (what talks to the AWS services that do the work). In API Gateway, the frontend is the <strong>method request and method response</strong>, and the backend is the <strong>integration request and integration response</strong>.</p>
+
+<h2>4. Amazon API Gateway</h2>
+<p>A service to <strong>create, publish, maintain, monitor and secure APIs at any scale</strong>. It handles accepting and processing many concurrent calls: traffic management, authorization and access control, monitoring, and API version management.</p>
+<table>
+<tr><th>Feature</th><th>Meaning</th></tr>
+<tr><td>Pay per use</td><td>You pay only for API calls received and data transferred out. No minimum fees.</td></tr>
+<tr><td>CloudFront integration</td><td>Uses the worldwide edge network for lowest latency.</td></tr>
+<tr><td>Throttling</td><td>Limits request rates so the backend can survive traffic spikes.</td></tr>
+<tr><td>Monitoring</td><td>A dashboard shows calls and performance metrics.</td></tr>
+<tr><td>Multiple versions</td><td>Several versions of the same API can run at once to iterate, test and release.</td></tr>
+<tr><td>Security</td><td>IAM for authorization. A <strong>Lambda authorizer</strong> can verify OAuth tokens or other mechanisms you already use.</td></tr>
+<tr><td>Lambda integration</td><td>Build completely serverless APIs. Data transformation turns requests into the form the target service expects.</td></tr>
+</table>
+<pre><code>aws apigateway create-rest-api --name cafe-api
+aws apigateway get-rest-apis
+aws apigateway create-deployment --rest-api-id API_ID --stage-name prod</code></pre>
+<p class="empty">Added by me: API Gateway also offers cheaper HTTP APIs and WebSocket APIs. The slides focus on REST APIs.</p>
+
+<h3>The example: a serverless web application</h3>
+<ol class="plain">
+<li><strong>Amazon S3</strong> hosts the static files (HTML, CSS, JavaScript, images), which load in the browser (same idea as Module 2's static website).</li>
+<li><strong>Amazon Cognito</strong> handles user registration, login and authentication to secure the backend API.</li>
+<li><strong>JavaScript in the browser</strong> calls the RESTful API through <strong>API Gateway</strong>, backed by <strong>Lambda</strong>.</li>
+<li><strong>Amazon DynamoDB</strong> is the persistence layer where the Lambda function stores data.</li>
+</ol>
+
+<h2>5. Containers</h2>
+<ul>
+<li>A <strong>container</strong> holds everything the software needs to run: code, runtime, libraries and system tools. It runs the same everywhere.</li>
+<li><strong>Docker</strong> is the platform that packages software into containers.</li>
+<li>One application can span several containers.</li>
+<li><strong>Kubernetes</strong> is open source orchestration software to deploy and manage containerized applications at scale.</li>
+</ul>
+<h3>Amazon ECR (Elastic Container Registry)</h3>
+<p>A fully managed <strong>Docker container registry</strong> to store, manage and deploy container images.</p>
+<ul>
+<li>Integrated with <strong>Amazon ECS</strong>: name the ECR repository in the <em>task definition</em> and ECS pulls the image.</li>
+<li>Works with normal Docker CLI commands (Docker Registry HTTP API v2), from the cloud, on-premises or your laptop.</li>
+<li>Images are stored in <strong>Amazon S3</strong> (high availability and durability) and encrypted at rest with S3 server-side encryption; transfers use HTTPS.</li>
+<li>Repositories are organized with <strong>namespaces</strong>. <strong>IAM</strong> controls who and what (even EC2 instances) can access them, and lets you share with other users and accounts.</li>
+<li>Supports third-party integrations.</li>
+</ul>
+<pre><code>aws ecr create-repository --repository-name cafe-web
+aws ecr get-login-password --region eu-west-1 | docker login --username AWS \
+  --password-stdin 123456789012.dkr.ecr.eu-west-1.amazonaws.com
+docker build -t cafe-web .
+docker tag cafe-web:latest 123456789012.dkr.ecr.eu-west-1.amazonaws.com/cafe-web:latest
+docker push 123456789012.dkr.ecr.eu-west-1.amazonaws.com/cafe-web:latest</code></pre>
+<h3>Running containers (refresher)</h3>
+<p class="empty">This part is mine, not from your pasted slides.</p>
+<p><strong>Amazon ECS</strong> is AWS's own container orchestrator: a <em>task definition</em> describes the containers, and ECS runs them as tasks or services in a <em>cluster</em>. <strong>Amazon EKS</strong> is managed Kubernetes. <strong>AWS Fargate</strong> runs containers without you managing the servers underneath (the serverless option).</p>
+<pre><code>aws ecs create-cluster --cluster-name cafe
+aws ecs register-task-definition --cli-input-json file://taskdef.json
+aws ecs list-clusters
+aws ecs list-tasks --cluster cafe</code></pre>
+
+<h2>6. AWS Step Functions</h2>
+<p>Coordinates multiple AWS services into <strong>serverless workflows</strong>, for example combining Lambda and ECS. A workflow is a series of steps, and the <strong>output of one step is the input of the next</strong>.</p>
+<ul>
+<li>You express it as a <strong>state machine</strong>. The console draws it graphically, easy to understand, explain and change.</li>
+<li>A <strong>state</strong> can do work (a <strong>Task</strong>), or choose a branch (a <strong>Choice</strong>). Tasks call code hosted in a function, container or instance, and can run for up to <strong>1 year</strong>.</li>
+<li>Step Functions triggers and tracks each step, lets you monitor each one as it happens, and <strong>retries on errors</strong> so the application runs in order.</li>
+<li>You can change, add or delete tasks and step order <strong>without changing code</strong>.</li>
+</ul>
+<pre><code>{"StartAt":"Validate","States":{
+  "Validate":{"Type":"Task","Resource":"arn:aws:lambda:...:function:validate",
+              "Retry":[{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Next":"Paid"},
+  "Paid":{"Type":"Choice","Choices":[{"Variable":"$.paid","BooleanEquals":true,"Next":"Prepare"}],"Default":"Reject"},
+  "Prepare":{"Type":"Task","Resource":"arn:aws:lambda:...:function:prepare","End":true},
+  "Reject":{"Type":"Fail"}}}</code></pre>
+<pre><code>aws stepfunctions create-state-machine --name cafe-order --definition file://def.json \
+  --role-arn arn:aws:iam::123456789012:role/sfn-role
+aws stepfunctions start-execution --state-machine-arn SM_ARN --input '{"paid":true}'
+aws stepfunctions list-executions --state-machine-arn SM_ARN
+aws stepfunctions describe-execution --execution-arn EXEC_ARN</code></pre>
+<p class="empty">Link to Module 2: a Systems Manager Maintenance Window can run a Step Functions workflow as a task.</p>
+
+<h2>7. Self-check</h2>
+<details><summary>What does "serverless" really mean?</summary><p>You don't manage the servers: AWS runs and scales the code, and you pay for use. Servers still exist.</p></details>
+<details><summary>What is a RESTful API and what do GET and POST do?</summary><p>An API built around resources and HTTP methods. GET reads a resource, POST creates one.</p></details>
+<details><summary>Name four benefits of API Gateway.</summary><p>Any four of: pay per call, CloudFront edge integration, throttling, monitoring dashboard, multiple API versions, IAM or Lambda authorizer security, serverless APIs with Lambda.</p></details>
+<details><summary>In the serverless web app, what does each of S3, Cognito, API Gateway, Lambda and DynamoDB do?</summary><p>S3 hosts the static site, Cognito handles users and login, API Gateway exposes the REST API, Lambda runs the backend code, DynamoDB stores the data.</p></details>
+<details><summary>What is a container, and what are Docker and Kubernetes?</summary><p>A container packages code, runtime, libraries and tools. Docker packages software into containers. Kubernetes orchestrates containers at scale.</p></details>
+<details><summary>What is Amazon ECR and how does ECS use it?</summary><p>A managed Docker registry that stores images (in S3, encrypted, IAM-controlled). ECS pulls the image named in the task definition.</p></details>
+<details><summary>What does Step Functions do and what is a state machine?</summary><p>It coordinates services into workflows. A state machine is the workflow: states (Task, Choice...) pass output to the next state, with tracking and retries.</p></details>
+
+<h2>8. Module checklist</h2>
+<div class="box" id="checklist5">
+<label class="chk"><input type="checkbox"> I can explain serverless vs containers vs EC2</label>
+<label class="chk"><input type="checkbox"> I can explain REST APIs and the main API Gateway features</label>
+<label class="chk"><input type="checkbox"> I can trace the serverless web app: S3, Cognito, API Gateway, Lambda, DynamoDB</label>
+<label class="chk"><input type="checkbox"> I can explain ECR, Docker, Kubernetes and Step Functions</label>
+<label class="chk"><input type="checkbox"> I verified my "What I learned" notes with my instructor</label>
+</div>
+
+<h2>What I learned</h2>
+<div class="learned" id="learned-5">
+<p><strong>Serverless</strong> does not mean there are no servers: I do not manage them. AWS runs and scales the code, and I pay for use.</p>
+<h3>APIs and API Gateway</h3>
+<p>An <strong>API</strong> lets two applications communicate. A <strong>RESTful API</strong> follows REST principles and uses HTTP methods on resources: <code>GET</code> reads data, <code>POST</code> creates data. In API Gateway the <strong>frontend</strong> is the method request and method response; the <strong>backend</strong> is the integration request and integration response.</p>
+<p><strong>Amazon API Gateway</strong> creates, publishes, maintains, monitors and secures APIs at any scale. Benefits: easy API creation without building the infrastructure, scalability, CloudWatch monitoring, throttling and quotas to protect the backend, pay only per call and data out, CloudFront edge integration, multiple API versions at once. <strong>Security:</strong> IAM, a Lambda authorizer (OAuth or other tokens), Cognito.</p>
+<p><strong>Serverless web app.</strong> S3 hosts the static files, Cognito manages users and login, API Gateway exposes the REST API, Lambda runs the backend code, DynamoDB stores the data. <em>Trace of GET /pets/1:</em> browser loads the site from S3, signs in with Cognito and gets a token, JavaScript calls API Gateway with the token, API Gateway invokes Lambda, Lambda reads DynamoDB, and the result returns as 200 OK with JSON.</p>
+<h3>Containers and ECR</h3>
+<p>A <strong>container</strong> is a running instance of an <strong>image</strong> that packages code, runtime, libraries and tools. <strong>Docker</strong> builds and runs containers; <strong>Kubernetes</strong> orchestrates them at scale. Benefits: portability, consistency between development and production, isolation, less overhead than one virtual machine per app, faster deployments, simpler scaling with services such as ECS.</p>
+<p><strong>Amazon ECR</strong> is a managed Docker registry that stores, manages and distributes images in repositories, with versioning and lifecycle management. Images are stored in S3 and encrypted at rest, IAM controls access, it works with the Docker CLI, and <strong>ECS pulls the image named in the task definition</strong>.</p>
+<h3>AWS Step Functions</h3>
+<p>A serverless workflow service that coordinates multiple steps: invoke services, run code, make decisions, handle errors and track progress. A <strong>state machine</strong> defines the steps, their order, the conditions for choosing a path, and what happens on success or failure; the output of one state is the input of the next. <strong>Task</strong> states do work (invoke Lambda, call a service API). <strong>Choice</strong> states pick the next state from a condition. Error handling: <strong>Retry</strong> (try again), <strong>Catch</strong> (handle the error and move to a designated state), <strong>Fail</strong> (end with failure), or an alternative recovery path. Tasks can run up to 1 year, and workflows can change without changing code.</p>
+<p><strong>Café scenario.</strong> Validate (Task, Lambda), then Choice "paid?": prepare the order (Task) or reject, then notify the customer (Task). Step Functions beats one big script because each step is visible and tracked, errors are retried, the flow can change without editing code, and one failure does not break everything.</p>
+<p><strong>Points filled in by my instructor.</strong> The frontend/backend names in API Gateway, API Gateway security options, the request trace, container vs image, how ECS uses ECR, and the café scenario answer.</p>
+</div>
+</article>
+
 <!-- ===== NEXT MODULE: copy the <article> above, change ids and content ===== -->
 </main>
 </div>
@@ -1153,6 +1375,29 @@ document.getElementById('g4Re').onclick=()=>{stop();go(n)};
 P.onclick=play;go(1);
 try{const bx=[...document.querySelectorAll('#checklist4 input')];const sv=JSON.parse(localStorage.getItem('m4-checks')||'[]');
 bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m4-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
+})();
+
+(function(){
+const S=[
+["Static website from S3","The browser loads the HTML, CSS and JavaScript from Amazon S3. No web server to manage."],
+["Cognito handles users","The user registers or signs in with Amazon Cognito, which manages users and returns a token used to secure the backend API."],
+["API Gateway receives the REST call","The JavaScript sends a RESTful call, such as GET /pets/1, with the token to API Gateway. It handles throttling, authorization and API versions (stages)."],
+["Lambda and DynamoDB do the work","API Gateway invokes a Lambda function, which reads or writes data in DynamoDB. The result goes back as 200 OK with JSON."],
+["Containers and ECR","A Docker image holds the app, runtime and libraries. It is stored in Amazon ECR (backed by S3, controlled by IAM) and ECS or EKS pulls it and runs the containers."],
+["Step Functions workflow","A state machine runs steps in order. Each state passes its output to the next, a Choice picks a branch, tasks can call Lambda or containers, and errors are retried."]];
+const svg=document.getElementById('fig5');if(!svg)return;
+const T=document.getElementById('g5T'),D=document.getElementById('g5D'),C=document.getElementById('g5Cnt'),P=document.getElementById('g5Play');
+let n=1,timer=null;
+function go(k){n=Math.max(1,Math.min(S.length,k));svg.setAttribute('class','');void svg.getBoundingClientRect();svg.setAttribute('class','on'+n);
+T.textContent=n+'. '+S[n-1][0];D.textContent=S[n-1][1];C.textContent='Step '+n+' of '+S.length;}
+function stop(){clearInterval(timer);timer=null;P.textContent='Play'}
+function play(){if(timer){stop();return}if(n===S.length)go(1);P.textContent='Pause';timer=setInterval(()=>{if(n>=S.length){stop();return}go(n+1)},6500)}
+document.getElementById('g5Next').onclick=()=>{stop();go(n+1)};
+document.getElementById('g5Prev').onclick=()=>{stop();go(n-1)};
+document.getElementById('g5Re').onclick=()=>{stop();go(n)};
+P.onclick=play;go(1);
+try{const bx=[...document.querySelectorAll('#checklist5 input')];const sv=JSON.parse(localStorage.getItem('m5-checks')||'[]');
+bx.forEach((b,i)=>{b.checked=!!sv[i];b.addEventListener('change',()=>localStorage.setItem('m5-checks',JSON.stringify(bx.map(x=>x.checked))))});}catch(e){}
 })();
 </script>
 </body>
